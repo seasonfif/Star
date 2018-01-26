@@ -1,0 +1,75 @@
+<resources>
+  <string name="app_name">Star</string>
+  <string name="title_home">Home</string>
+  <string name="title_info">Info</string>
+  <string name="title_dashboard">Dashboard</string>
+  <string name="title_notifications">Notifications</string>
+  <string name="title_activity_settings">Settings</string>
+
+  <!-- Strings related to Settings -->
+
+  <!-- Example General settings -->
+  <string name="pref_header_general">General</string>
+
+  <string name="pref_title_social_recommendations">Enable social recommendations</string>
+  <string name="pref_description_social_recommendations">Recommendations for people to contact based
+    on your message history
+  </string>
+
+  <string name="pref_title_display_name">Display name</string>
+  <string name="pref_default_display_name">John Smith</string>
+
+  <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+
+  <!-- Example settings for Data & Sync -->
+  <string name="pref_header_data_sync">Data &amp; sync</string>
+
+  <string name="pref_title_sync_frequency">Sync frequency</string>
+
+  <string-array name="multi_select_list_preference_default_value" />
+
+  <string name="pref_title_system_sync_settings">System sync settings</string>
+
+  <!-- Example settings for Notifications -->
+  <string name="pref_header_notifications">Notifications</string>
+
+  <string name="pref_title_new_message_notifications">New message notifications</string>
+
+  <string name="pref_title_ringtone">Ringtone</string>
+  <string name="pref_ringtone_silent">Silent</string>
+
+  <string name="pref_title_vibrate">Vibrate</string>
+  <string name="title_item_list">Items</string>
+  <string name="title_item_detail">Item Detail</string>
+
+  <!-- Strings related to Settings -->
+  <string name="settings_category_basic">基本设置</string>
+  <string name="settings_category_advanced">高级设置</string>
+  <string name="settings_category_other">其他设置</string>
+  <string name="settings_switch_preference_title">Switch Preference</string>
+  <string name="settings_switch_preference_summary">Switch Preference 描述</string>
+  <string name="settings_check_box_preference_title">Check Box Preference</string>
+  <string name="settings_edit_text_preference_title">Edit Text Preference</string>
+  <string name="settings_edit_text_preference_default_value">Material Design</string>
+  <string name="settings_list_preference_dialog_title">List Preference</string>
+  <string name="settings_list_preference_title">List Preference</string>
+  <string name="settings_multi_select_list_preference_dialog_title">Multi Select List Preference</string>
+  <string name="settings_multi_select_list_preference_title">Multi Select List Preference</string>
+  <string name="settings_preference_click_title">OnPreferenceClickListener</string>
+  <string name="settings_preference_click_to_activity">点击跳转Activity</string>
+  <string name="pref_on_preference_click">onPreferenceClick</string>
+  <string name="title_activity_login">Sign in</string>
+
+  <!-- Strings related to login -->
+  <string name="prompt_email">Email</string>
+  <string name="prompt_password">Password (optional)</string>
+  <string name="action_sign_in">Sign in or register</string>
+  <string name="action_sign_in_short">Sign in</string>
+  <string name="error_invalid_email">This email address is invalid</string>
+  <string name="error_invalid_password">This password is too short</string>
+  <string name="error_incorrect_password">This password is incorrect</string>
+  <string name="error_field_required">This field is required</string>
+  <string name="permission_rationale">"Contacts permissions are needed for providing email
+    completions."
+  </string>
+</resources>
