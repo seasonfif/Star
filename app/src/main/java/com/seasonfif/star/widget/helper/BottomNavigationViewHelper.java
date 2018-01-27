@@ -1,9 +1,10 @@
-package com.seasonfif.star.view;
+package com.seasonfif.star.widget.helper;
 
 import android.annotation.SuppressLint;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
+
 import java.lang.reflect.Field;
 
 /**
