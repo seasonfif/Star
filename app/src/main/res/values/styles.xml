@@ -1,20 +1,20 @@
 <resources>
 
-    <style name="Indigo" parent="AppTheme">
+    <style name="App_Indigo" parent="AppTheme">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary_indigo</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_indigo</item>
         <item name="colorAccent">@color/colorAccent_indigo</item>
     </style>
 
-    <style name="Cyan" parent="AppTheme">
+    <style name="App_Cyan" parent="AppTheme">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary_cyan</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_cyan</item>
         <item name="colorAccent">@color/colorAccent_cyan</item>
     </style>
 
-    <style name="Black" parent="AppTheme">
+    <style name="App_Black" parent="AppTheme">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary_black</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_black</item>

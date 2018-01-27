@@ -26,4 +26,9 @@ dependencies {
     implementation 'com.android.support:support-vector-drawable:26.1.0'
     implementation 'com.android.support:support-v4:26.1.0'
     implementation 'com.android.support:recyclerview-v7:26.1.0'
+
+    compile 'com.google.code.gson:gson:2.7'
+    compile 'net.danlew:android.joda:2.9.4.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.2.1'
+    compile 'com.jakewharton:butterknife:8.2.1'
 }

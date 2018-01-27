@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Star</string>
-    <string name="title_home">Home</string>
-    <string name="title_info">Info</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_repo">Repo</string>
+    <string name="title_star">Star</string>
+    <string name="title_order">Order</string>
+    <string name="title_setting">Setting</string>
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
