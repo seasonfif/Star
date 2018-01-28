@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.seasonfif.star.R;
+import com.seasonfif.star.database.GreenDaoManager;
 import com.seasonfif.star.model.Repository;
 import com.seasonfif.star.net.PaginationLink;
 import com.seasonfif.star.net.RelType;
@@ -171,6 +172,7 @@ public class StarFragment extends Fragment {
 
                     @Override
                     public void onNext(Pair<List<Repository>, Integer> pair) {
+                        saveDB(pair.first);
                         List<Repository> datas = repoAdapter.mDataList;
                         if (pair.second != null) {
                             pageIndex = pair.second;
@@ -181,6 +183,13 @@ public class StarFragment extends Fragment {
                         mRecyclerView.loadMoreFinish(pair.first == null || pair.first.size() == 0, pair.second != null);
                     }
                 });
+    }
+
+    private void saveDB(List<Repository> repos) {
+        if (repos == null || repos.size() == 0) return;
+        for (Repository repo : repos) {
+            GreenDaoManager.getInstance().getDaoSession().insertOrReplace(repo);
+        }
     }
 
     /**

@@ -10,8 +10,12 @@ import android.widget.TextView;
 import com.seasonfif.star.MyApplication;
 import com.seasonfif.star.R;
 import com.seasonfif.star.model.Repository;
+import com.seasonfif.star.utils.DateUtils;
 import com.seasonfif.star.widget.CircleImageView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,7 +49,7 @@ public class RepoAdapter extends BaseAdapter<Repository, RepoAdapter.ViewHolder>
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(getInflater().inflate(R.layout.cardview_repository_item, parent, false));
+        return new ViewHolder(getInflater().inflate(R.layout.repository_item, parent, false));
     }
 
     @Override
@@ -56,8 +60,18 @@ public class RepoAdapter extends BaseAdapter<Repository, RepoAdapter.ViewHolder>
         holder.language.setText(TextUtils.isEmpty(repository.language) ? "" : repository.language);
         holder.description.setText(TextUtils.isEmpty(repository.description) ? mContext.getResources().getString(R.string.has_no_description) : repository.description);
         holder.star_fork.setText(mContext.getString(R.string.star_fork,
-                repository.stargazers_count, repository.forks_count, repository.watchers_count));
-//        holder.created_at.setText(mContext.getString(R.string.update_at, DateUtils.sdfyyyy_MM_dd_slash.format(new Date(repository.updated_at))));
+                repository.stargazers_count, repository.forks_count));
+        String date_create = "";
+        String date_update = "";
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            date_create = DateUtils.sdfyyyy_MM_dd_slash.format(format.parse(repository.created_at));
+            date_update = DateUtils.sdfyyyy_MM_dd_slash.format(format.parse(repository.updated_at));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        holder.created_at.setText(mContext.getString(R.string.create_at, date_create));
+        holder.updated_at.setText(mContext.getString(R.string.update_at, date_update));
         holder.avatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,7 +81,7 @@ public class RepoAdapter extends BaseAdapter<Repository, RepoAdapter.ViewHolder>
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, language, description, star_fork, created_at;
+        public TextView name, language, description, star_fork, created_at, updated_at;
         public CircleImageView avatar;
 
         public ViewHolder(View view) {
@@ -77,6 +91,7 @@ public class RepoAdapter extends BaseAdapter<Repository, RepoAdapter.ViewHolder>
             description = (TextView) view.findViewById(R.id.description);
             star_fork = (TextView) view.findViewById(R.id.star_fork);
             created_at = (TextView) view.findViewById(R.id.created_at);
+            updated_at = (TextView) view.findViewById(R.id.update_at);
             avatar = (CircleImageView) view.findViewById(R.id.avatar);
         }
     }
