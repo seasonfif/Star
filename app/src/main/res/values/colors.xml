@@ -11,4 +11,8 @@
     <color name="colorPrimary_black">#3A3B40</color>
     <color name="colorPrimaryDark_black">#313236</color>
     <color name="colorAccent_black">#009688</color>
+
+    <color name="divider_color">#FFB7B2B2</color>
+    <color name="green_normal">#37C000</color>
+    <color name="green_pressed">#30A070</color>
 </resources>

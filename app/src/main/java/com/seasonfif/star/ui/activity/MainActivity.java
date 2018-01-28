@@ -13,7 +13,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 
 import com.seasonfif.star.R;
-import com.seasonfif.star.ui.fragment.BaseFragment;
+import com.seasonfif.star.ui.fragment.StarFragment;
 import com.seasonfif.star.utils.ThemeUtil;
 
 import java.util.ArrayList;
@@ -94,16 +94,16 @@ public class MainActivity extends BaseActivity {
 
     private void setupViewPager() {
         pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        pagerAdapter.addFragment(BaseFragment.newInstance("111"));
-        pagerAdapter.addFragment(BaseFragment.newInstance("222"));
-        pagerAdapter.addFragment(BaseFragment.newInstance("333"));
+        pagerAdapter.addFragment(StarFragment.newInstance("111"));
+        pagerAdapter.addFragment(StarFragment.newInstance("222"));
+        pagerAdapter.addFragment(StarFragment.newInstance("333"));
         pager.setAdapter(pagerAdapter);
         pager.addOnPageChangeListener(pageChangeLinstener);
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter{
 
-        private BaseFragment current;
+        private StarFragment current;
         private final List<Fragment> fragments = new ArrayList<>();
 
         public ViewPagerAdapter(FragmentManager fm) {
@@ -114,13 +114,13 @@ public class MainActivity extends BaseActivity {
             fragments.add(fragment);
         }
 
-        public BaseFragment getCurrent() {
+        public StarFragment getCurrent() {
             return current;
         }
 
         @Override
         public void setPrimaryItem(ViewGroup container, int position, Object object) {
-            current = (BaseFragment) object;
+            current = (StarFragment) object;
             super.setPrimaryItem(container, position, object);
         }
 

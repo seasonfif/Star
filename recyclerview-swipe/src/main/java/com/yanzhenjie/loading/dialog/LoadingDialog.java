@@ -20,7 +20,7 @@ import android.content.Context;
 import android.widget.TextView;
 
 import com.yanzhenjie.loading.LoadingView;
-import com.yanzhenjie.loading.R;
+import com.yanzhenjie.recyclerview.swipe.R;
 
 /**
  * <p>Default loading dialog.</p>

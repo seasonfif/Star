@@ -9,8 +9,6 @@ android {
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
     }
-
-    resourcePrefix 'recycler_swipe_'
 }
 
 dependencies {
