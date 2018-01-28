@@ -8,6 +8,8 @@ package com.seasonfif.star.constant;
 public class Constants {
 
   public final static String API_URL = "https://api.github.com";
+  public final static String DB_NAME_STAR = "my_star";
+
   public final static String CLIENT_ID = "17ff3dcc7b25df9df856";
   public final static String CLIENT_SECRET = "4e03426b6a9250c1c7f833e7c6907307d56641d8";
 

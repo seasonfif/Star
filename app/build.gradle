@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 26
@@ -10,7 +11,22 @@ android {
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
     }
+
+    //greendao配置
+    greendao {
+        //版本号，升级时可配置
+        schemaVersion 1
+        //由GreenDao自动生成代码所在的包名，默认的是在项目包下面新建一个gen
+        daoPackage 'com.seasonfif.star.database.gen'
+        //设置自动生成代码的目录
+        targetGenDir 'src/main/java'
+    }
+
     buildTypes {
+        debug {
+            debuggable true
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -27,6 +43,7 @@ dependencies {
     implementation 'com.android.support:support-v4:26.1.0'
     implementation 'com.android.support:recyclerview-v7:26.1.0'
 
+    debugCompile 'com.amitshekhar.android:debug-db:1.0.2'
     compile 'com.google.code.gson:gson:2.7'
     compile 'net.danlew:android.joda:2.9.4.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.2.1'
@@ -38,6 +55,7 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    compile 'org.greenrobot:greendao:3.2.0'
 
     compile 'com.squareup.picasso:picasso:2.5.2'
 }

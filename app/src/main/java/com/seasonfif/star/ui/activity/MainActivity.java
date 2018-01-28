@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 
 import com.seasonfif.star.R;
+import com.seasonfif.star.ui.fragment.OrderFragment;
 import com.seasonfif.star.ui.fragment.StarFragment;
 import com.seasonfif.star.utils.ThemeUtil;
 
@@ -94,8 +95,8 @@ public class MainActivity extends BaseActivity {
 
     private void setupViewPager() {
         pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        pagerAdapter.addFragment(StarFragment.newInstance("111"));
-        pagerAdapter.addFragment(new Fragment());
+        pagerAdapter.addFragment(StarFragment.newInstance("Star"));
+        pagerAdapter.addFragment(OrderFragment.newInstance("Order"));
         pagerAdapter.addFragment(new Fragment());
         pager.setAdapter(pagerAdapter);
         pager.addOnPageChangeListener(pageChangeLinstener);

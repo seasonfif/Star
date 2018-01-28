@@ -10,24 +10,27 @@ import android.widget.TextView;
 import com.seasonfif.star.MyApplication;
 import com.seasonfif.star.R;
 import com.seasonfif.star.model.Repository;
-import com.seasonfif.star.utils.DateUtils;
 import com.seasonfif.star.widget.CircleImageView;
 
-import java.util.Date;
 import java.util.List;
 
 /**
  * Created by lxy on 2018/1/27.
  */
 
-public class MainAdapter extends BaseAdapter<Repository, MainAdapter.ViewHolder> {
+public class RepoAdapter extends BaseAdapter<Repository, RepoAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<Repository> mDataList;
+    public List<Repository> mDataList;
 
-    public MainAdapter(Context context) {
+    public RepoAdapter(Context context) {
         super(context);
         this.mContext = context;
+    }
+
+    @Override
+    public Repository getItem(int position) {
+        return mDataList.get(position);
     }
 
     public void notifyDataSetChanged(List<Repository> dataList) {

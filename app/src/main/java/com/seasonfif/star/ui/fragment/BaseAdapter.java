@@ -22,6 +22,8 @@ public abstract class BaseAdapter<T, VH extends RecyclerView.ViewHolder> extends
         return mInflater;
     }
 
+    public abstract T getItem(int position);
+
     public abstract void notifyDataSetChanged(List<T> dataList);
 
 }
