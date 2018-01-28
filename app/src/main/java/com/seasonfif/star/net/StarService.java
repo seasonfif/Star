@@ -1,5 +1,10 @@
 package com.seasonfif.star.net;
 
+import com.seasonfif.star.model.Repository;
+
+import java.util.List;
+
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -13,9 +18,9 @@ import rx.Observable;
 public interface StarService {
 
     @GET("/users/{username}/starred")
-    Observable<Response> userStarredReposList(@Path("username") String username, @Query("sort") String sort);
+    Observable<List<Repository>> userStarredReposList(@Path("username") String username, @Query("sort") String sort);
 
     @GET("/users/{username}/starred")
-    Observable<Response> userStarredReposList(@Path("username") String username, @Query("sort") String sort,
-                              @Query("page") int page, @Query("per_page") int per_page);
+    Observable<Response<List<Repository>>> userStarredReposList(@Path("username") String username, @Query("sort") String sort,
+                                              @Query("page") int page, @Query("per_page") int per_page);
 }

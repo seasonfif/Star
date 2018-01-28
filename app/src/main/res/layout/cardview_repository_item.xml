@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:orientation="horizontal"
+    android:background="?android:selectableItemBackground">
+
+    <com.seasonfif.star.widget.CircleImageView
+        android:id="@+id/avatar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/avatar_holder"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="2dp"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/language"
+                android:layout_marginRight="10dp"
+                android:textColor="@color/colorPrimary_black"
+                android:textSize="12dp"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="非主流程序员"/>
+
+            <TextView
+                android:id="@+id/language"
+                android:layout_width="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                android:textColor="@color/colorPrimary_black"
+                android:textSize="12dp"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="Java"/>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/description"
+            android:textColor="@color/colorPrimary_black"
+            android:textSize="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:text="美女说：非主流程序员."/>
+        <TextView
+            android:id="@+id/star_fork"
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorPrimary_black"
+            android:textSize="12dp"
+            android:singleLine="true"
+            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content"
+            android:text="非主流程序员"/>
+
+        <TextView
+            android:id="@+id/created_at"
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorPrimary_black"
+            android:textSize="12dp"
+            android:layout_marginTop="4dp"
+            android:layout_height="wrap_content"
+            android:text="非主流程序员"/>
+    </LinearLayout>
+
+</LinearLayout>

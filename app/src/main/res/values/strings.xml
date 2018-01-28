@@ -6,6 +6,11 @@
     <string name="title_setting">Setting</string>
     <string name="title_activity_settings">Settings</string>
 
+  <string name="has_no_description">No description</string>
+  <string name="star_fork">star:%1$d \0\0\0 fork:%2$d \0\0\0  watcher:%3$d</string>
+  <string name="create_at">Create at %s</string>
+  <string name="update_at">Update at %s</string>
+
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->

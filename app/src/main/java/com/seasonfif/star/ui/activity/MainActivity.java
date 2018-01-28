@@ -37,15 +37,15 @@ public class MainActivity extends BaseActivity {
                     switch (item.getItemId()) {
                         case R.id.navigation_star:
                             pager.setCurrentItem(0);
-                            ThemeUtil.changeTheme(MainActivity.this, ThemeUtil.INDIGO);
+//                            ThemeUtil.changeTheme(MainActivity.this, ThemeUtil.INDIGO);
                             return true;
                         case R.id.navigation_order:
                             pager.setCurrentItem(1);
-                            ThemeUtil.changeTheme(MainActivity.this, ThemeUtil.CYAN);
+//                            ThemeUtil.changeTheme(MainActivity.this, ThemeUtil.CYAN);
                             return true;
                         case R.id.navigation_setting:
                             pager.setCurrentItem(2);
-                            ThemeUtil.changeTheme(MainActivity.this, ThemeUtil.BLACK);
+//                            ThemeUtil.changeTheme(MainActivity.this, ThemeUtil.BLACK);
                             return true;
                     }
                     return false;
@@ -95,8 +95,8 @@ public class MainActivity extends BaseActivity {
     private void setupViewPager() {
         pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         pagerAdapter.addFragment(StarFragment.newInstance("111"));
-        pagerAdapter.addFragment(StarFragment.newInstance("222"));
-        pagerAdapter.addFragment(StarFragment.newInstance("333"));
+        pagerAdapter.addFragment(new Fragment());
+        pagerAdapter.addFragment(new Fragment());
         pager.setAdapter(pagerAdapter);
         pager.addOnPageChangeListener(pageChangeLinstener);
     }
@@ -120,7 +120,7 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public void setPrimaryItem(ViewGroup container, int position, Object object) {
-            current = (StarFragment) object;
+//            current = (StarFragment) object;
             super.setPrimaryItem(container, position, object);
         }
 

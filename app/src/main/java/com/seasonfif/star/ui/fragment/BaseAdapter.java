@@ -10,7 +10,7 @@ import java.util.List;
  * Created by lxy on 2018/1/27.
  */
 
-public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+public abstract class BaseAdapter<T, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
     private LayoutInflater mInflater;
 
@@ -22,6 +22,6 @@ public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder> extends Re
         return mInflater;
     }
 
-    public abstract void notifyDataSetChanged(List<String> dataList);
+    public abstract void notifyDataSetChanged(List<T> dataList);
 
 }
