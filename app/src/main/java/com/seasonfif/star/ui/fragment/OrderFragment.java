@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -21,13 +20,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.seasonfif.star.R;
+import com.seasonfif.star.database.GreenDaoManager;
 import com.seasonfif.star.model.Repository;
 import com.seasonfif.star.net.PaginationLink;
 import com.seasonfif.star.net.RelType;
 import com.seasonfif.star.net.RetrofitEngine;
 import com.seasonfif.star.net.StarService;
+import com.seasonfif.star.utils.Navigator;
 import com.seasonfif.star.widget.DefineLoadMoreView;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
@@ -37,12 +39,8 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import retrofit2.Response;
 import rx.Subscriber;
 import rx.Subscription;
@@ -56,8 +54,6 @@ import rx.schedulers.Schedulers;
 
 public class OrderFragment extends Fragment {
 
-    @BindView(R.id.appbar)
-    AppBarLayout mAppBarLayout;
     @BindView(R.id.collapsingToolbarLayout)
     CollapsingToolbarLayout mCollapsingToolbarLayout;
     @BindView(R.id.toolbar)
@@ -69,7 +65,9 @@ public class OrderFragment extends Fragment {
     @BindView(R.id.content_container)
     SwipeRefreshLayout mContentContainer;
 
+    private int pageIndex = 1;
     private SwipeMenuRecyclerView mRecyclerView;
+    private RepoAdapter repoAdapter;
     public static String KEY_TITLE = "title";
     String title;
 
@@ -93,7 +91,7 @@ public class OrderFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.app_bar_main, container, false);
+        return inflater.inflate(R.layout.fragment_order, container, false);
     }
 
     @Override
@@ -102,9 +100,9 @@ public class OrderFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         setHasOptionsMenu(true);
+        mToolbar.inflateMenu(R.menu.action_menu);
 
-        Toolbar mToolbar = initAppBarLayout();
-        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
+        initAppBarLayout();
 
         View customerView = initCustomerView();
         if (customerView != null) {
@@ -141,92 +139,69 @@ public class OrderFragment extends Fragment {
         mRecyclerView.setLoadMoreView(loadMoreView); // 设置LoadMoreView更新监听。
         mRecyclerView.setLoadMoreListener(mLoadMoreListener); // 加载更多的监听。
 
-        menuAdapter = new RepoAdapter(getContext());
-        mRecyclerView.setAdapter(menuAdapter);
-        getData();
+        repoAdapter = new RepoAdapter(getContext());
+        mRecyclerView.setAdapter(repoAdapter);
+        getData(true);
         return mRecyclerView;
     }
 
-    public Toolbar initAppBarLayout() {
-        mAppBarLayout.setVisibility(View.VISIBLE);
+    public void initAppBarLayout() {
         mCollapsingToolbarLayout.setTitle(title);
         mCollapsingToolbarLayout.setExpandedTitleColor(Color.WHITE);
         mCollapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
-        return mToolbar;
     }
 
-    private void getData(){
-        StarService service = RetrofitEngine.getRetrofit().create(StarService.class);
-        Subscription subscription = service.userStarredReposList("seasonfif", "updated", 1, 10)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(new Func1<Response<List<Repository>>, Pair<List<Repository>, Integer>>() {
-                    @Override
-                    public Pair<List<Repository>, Integer> call(Response<List<Repository>> response) {
-
-                        return new Pair<>(response.body(), getLinkData(response));
-                    }
-                })
-                .subscribe(new Subscriber<Pair<List<Repository>, Integer>>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        mContentContainer.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onNext(Pair<List<Repository>, Integer> pair) {
-                        menuAdapter.notifyDataSetChanged(pair.first);
-                        mContentContainer.setRefreshing(false);
-                        mRecyclerView.loadMoreFinish(pair.first == null || pair.first.size() == 0, pair.second != null);
-                    }
-                });
-    }
-
-    private Integer getLinkData(Response r) {
-        if (r != null) {
-            String link = r.headers().get("Link");
-            if (link != null) {
-                String[] parts = link.split(",");
-                try {
-                    PaginationLink paginationLink = new PaginationLink(parts[0]);
-                    return paginationLink.rel == RelType.next ? paginationLink.page : null;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+    private void getData(final boolean refresh) {
+        if (refresh) {
+            pageIndex = 1;
+            if (repoAdapter.mDataList != null) {
+                repoAdapter.mDataList.clear();
+            } else {
+                repoAdapter.mDataList = new ArrayList<>();
             }
         }
-        return null;
+        StarService service = RetrofitEngine.getRetrofit().create(StarService.class);
+        Subscription subscription = service.userStarredReposList("seasonfif", "updated", pageIndex, 10)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map(new Func1<Response<List<Repository>>, Pair<List<Repository>, Integer>>() {
+                @Override
+                public Pair<List<Repository>, Integer> call(Response<List<Repository>> response) {
+
+                    return new Pair<>(response.body(), getLinkData(response));
+                }
+            })
+            .subscribe(new Subscriber<Pair<List<Repository>, Integer>>() {
+                @Override
+                public void onCompleted() {
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    mContentContainer.setRefreshing(false);
+                }
+
+                @Override
+                public void onNext(Pair<List<Repository>, Integer> pair) {
+                    saveDB(pair.first);
+                    List<Repository> datas = repoAdapter.mDataList;
+                    if (pair.second != null) {
+                        pageIndex = pair.second;
+                    }
+                    datas.addAll(pair.first);
+                    repoAdapter.notifyDataSetChanged(datas);
+                    mContentContainer.setRefreshing(false);
+                    mRecyclerView.loadMoreFinish(pair.first == null || pair.first.size() == 0, pair.second != null);
+                }
+            });
     }
 
-    private List<Repository> mDataList;
-    private RepoAdapter menuAdapter;
-
-    /**
-     * 第一次加载数据。
-     */
-    private void loadData() {
-//        mDataList = createDataList(0);
-        menuAdapter.notifyDataSetChanged(mDataList);
-
-        mContentContainer.setRefreshing(false);
-
-        // 第一次加载数据：一定要掉用这个方法。
-        // 第一个参数：表示此次数据是否为空，假如你请求到的list为空(== null || list.size == 0)，那么这里就要true。
-        // 第二个参数：表示是否还有更多数据，根据服务器返回给你的page等信息判断是否还有更多，这样可以提供性能，如果不能判断则传true。
-        mRecyclerView.loadMoreFinish(false, true);
-    }
-
-    protected List<String> createDataList(int start) {
-        List<String> strings = new ArrayList<>();
-        for (int i = start; i < start + 20; i++) {
-            strings.add("第" + i + "个Item");
+    private void saveDB(List<Repository> repos) {
+        if (repos == null || repos.size() == 0) return;
+        for (Repository repo : repos) {
+            GreenDaoManager.getInstance().getDaoSession().insertOrReplace(repo);
         }
-        return strings;
     }
 
     /**
@@ -238,7 +213,7 @@ public class OrderFragment extends Fragment {
             mRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    getData();
+                    getData(true);
                 }
             }, 1000); // 延时模拟请求服务器。
         }
@@ -253,7 +228,8 @@ public class OrderFragment extends Fragment {
             mRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    List<String> strings = createDataList(menuAdapter.getItemCount());
+                    getData(false);
+                    /*List<String> strings = createDataList(menuAdapter.getItemCount());
 //                    mDataList.addAll(strings);
                     // notifyItemRangeInserted()或者notifyDataSetChanged().
                     menuAdapter.notifyItemRangeInserted(mDataList.size() - strings.size(), strings.size());
@@ -266,7 +242,7 @@ public class OrderFragment extends Fragment {
                     // 如果加载失败调用下面的方法，传入errorCode和errorMessage。
                     // errorCode随便传，你自定义LoadMoreView时可以根据errorCode判断错误类型。
                     // errorMessage是会显示到loadMoreView上的，用户可以看到。
-                    // mRecyclerView.loadMoreError(0, "请求网络失败");
+                    // mRecyclerView.loadMoreError(0, "请求网络失败");*/
                 }
             }, 1000);
         }
@@ -278,7 +254,7 @@ public class OrderFragment extends Fragment {
     private SwipeItemClickListener mItemClickListener = new SwipeItemClickListener() {
         @Override
         public void onItemClick(View itemView, int position) {
-            Toast.makeText(getContext(), "第" + position + "个", Toast.LENGTH_SHORT).show();
+            Navigator.openRepoProfile(getActivity(), repoAdapter.getItem(position));
         }
     };
 
@@ -331,10 +307,26 @@ public class OrderFragment extends Fragment {
         }
     };
 
+    private Integer getLinkData(Response r) {
+        if (r != null) {
+            String link = r.headers().get("Link");
+            if (link != null) {
+                String[] parts = link.split(",");
+                try {
+                    PaginationLink paginationLink = new PaginationLink(parts[0]);
+                    return paginationLink.rel == RelType.next ? paginationLink.page : null;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getActivity().getMenuInflater().inflate(R.menu.activity_main_menu, menu);
+        getActivity().getMenuInflater().inflate(R.menu.action_menu, menu);
 //        refreshItem = menu.findItem(R.id.action_refresh);
     }
 

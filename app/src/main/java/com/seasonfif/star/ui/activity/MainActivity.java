@@ -10,18 +10,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.seasonfif.star.R;
 import com.seasonfif.star.ui.fragment.OrderFragment;
 import com.seasonfif.star.ui.fragment.StarFragment;
-import com.seasonfif.star.utils.ThemeUtil;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity {
 
@@ -97,14 +92,15 @@ public class MainActivity extends BaseActivity {
         pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         pagerAdapter.addFragment(StarFragment.newInstance("Star"));
         pagerAdapter.addFragment(OrderFragment.newInstance("Order"));
-        pagerAdapter.addFragment(new Fragment());
+        pagerAdapter.addFragment(OrderFragment.newInstance("Setting"));
+        //预加载其余两个fragment，同时会缓存这三个fragment
+        pager.setOffscreenPageLimit(2);
         pager.setAdapter(pagerAdapter);
         pager.addOnPageChangeListener(pageChangeLinstener);
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter{
 
-        private StarFragment current;
         private final List<Fragment> fragments = new ArrayList<>();
 
         public ViewPagerAdapter(FragmentManager fm) {
@@ -113,16 +109,6 @@ public class MainActivity extends BaseActivity {
 
         public void addFragment(Fragment fragment){
             fragments.add(fragment);
-        }
-
-        public StarFragment getCurrent() {
-            return current;
-        }
-
-        @Override
-        public void setPrimaryItem(ViewGroup container, int position, Object object) {
-//            current = (StarFragment) object;
-            super.setPrimaryItem(container, position, object);
         }
 
         @Override

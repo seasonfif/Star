@@ -1,6 +1,5 @@
 package com.seasonfif.star.ui.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +24,7 @@ import com.seasonfif.star.net.PaginationLink;
 import com.seasonfif.star.net.RelType;
 import com.seasonfif.star.net.RetrofitEngine;
 import com.seasonfif.star.net.StarService;
+import com.seasonfif.star.utils.Navigator;
 import com.seasonfif.star.widget.DefineLoadMoreView;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
@@ -96,7 +96,7 @@ public class StarFragment extends Fragment {
 
         setHasOptionsMenu(true);
         mToolbar.setTitle("Star");
-        mToolbar.inflateMenu(R.menu.activity_main_menu);
+        mToolbar.inflateMenu(R.menu.action_menu);
 
         View customerView = initCustomerView();
         if (customerView != null) {
@@ -242,12 +242,7 @@ public class StarFragment extends Fragment {
     private SwipeItemClickListener mItemClickListener = new SwipeItemClickListener() {
         @Override
         public void onItemClick(View itemView, int position) {
-            Repository repository = repoAdapter.getItem(position);
-            Intent it = new Intent();
-            it.setAction("com.seasonfif.github.repo.detail");
-            it.putExtra("owner", repository.owner.login);
-            it.putExtra("repoName", repository.name);
-            startActivity(it);
+            Navigator.openRepoProfile(getActivity(), repoAdapter.getItem(position));
         }
     };
 
@@ -319,7 +314,7 @@ public class StarFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.activity_main_menu, menu);
+        inflater.inflate(R.menu.action_menu, menu);
 //        refreshItem = menu.findItem(R.id.action_refresh);
     }
 
