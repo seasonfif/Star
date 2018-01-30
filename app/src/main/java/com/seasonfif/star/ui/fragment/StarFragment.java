@@ -51,7 +51,7 @@ import rx.schedulers.Schedulers;
  * Created by lxy on 2018/1/27.
  */
 
-public class StarFragment extends Fragment {
+public class StarFragment extends Fragment implements Toolbar.OnMenuItemClickListener {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -60,11 +60,13 @@ public class StarFragment extends Fragment {
     @BindView(R.id.content_container)
     SwipeRefreshLayout mContentContainer;
 
+    public static String KEY_TITLE = "title";
     private int pageIndex = 1;
     private SwipeMenuRecyclerView mRecyclerView;
     private RepoAdapter repoAdapter;
-    public static String KEY_TITLE = "title";
-    String title;
+    private String sort;
+    private String direction;
+    private String title;
 
     public static StarFragment newInstance(String title) {
         Bundle args = new Bundle();
@@ -77,6 +79,7 @@ public class StarFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         Bundle bundle = getArguments();
         if (bundle != null){
             title = bundle.getString(KEY_TITLE);
@@ -94,9 +97,9 @@ public class StarFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        setHasOptionsMenu(true);
         mToolbar.setTitle("Star");
-        mToolbar.inflateMenu(R.menu.action_menu);
+        mToolbar.inflateMenu(R.menu.star_menu);
+        mToolbar.setOnMenuItemClickListener(this);
 
         View customerView = initCustomerView();
         if (customerView != null) {
@@ -149,7 +152,7 @@ public class StarFragment extends Fragment {
             }
         }
         StarService service = RetrofitEngine.getRetrofit().create(StarService.class);
-        Subscription subscription = service.userStarredReposList("seasonfif", "updated", pageIndex, 10)
+        Subscription subscription = service.userStarredReposListBy("seasonfif", sort, direction, pageIndex, 10)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(new Func1<Response<List<Repository>>, Pair<List<Repository>, Integer>>() {
@@ -311,24 +314,35 @@ public class StarFragment extends Fragment {
         return null;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.action_menu, menu);
-//        refreshItem = menu.findItem(R.id.action_refresh);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+    @Override public boolean onMenuItemClick(MenuItem item) {
         int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_refresh) {
+        if (id == R.id.create_desc) {
             Toast.makeText(getActivity(), "refresh", Toast.LENGTH_SHORT).show();
+            sort = "created";
+            direction = "desc";
+            refreshWithLoading();
+            return true;
+        }else if(id == R.id.create_asc){
+            sort = "created";
+            direction = "asc";
+            refreshWithLoading();
+            return true;
+        }else if(id == R.id.update_desc){
+            sort = "updated";
+            direction = "desc";
+            refreshWithLoading();
+            return true;
+        }else if(id == R.id.update_asc){
+            sort = "updated";
+            direction = "asc";
+            refreshWithLoading();
             return true;
         }
-        return super.onOptionsItemSelected(item);
+        return true;
+    }
+
+
+    private void refreshWithLoading() {
+        getData(true);
     }
 }

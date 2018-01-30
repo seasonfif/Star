@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:orientation="vertical">
+
+    <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="?android:attr/selectableItemBackground"
+      android:padding="20dp">
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerVertical="true"
+          android:textColor="#000000"
+          android:textSize="16dp"
+          android:text="切换主题"/>
+
+        <com.seasonfif.star.widget.CircleImageView
+          android:id="@+id/theme_switch"
+          android:layout_width="28dp"
+          android:layout_height="28dp"
+          android:layout_centerVertical="true"
+          android:layout_alignParentRight="true"
+          android:layout_marginRight="10dp"
+          android:src="?attr/app_accent_color"/>
+    </RelativeLayout>
+
+    <View
+      android:layout_width="match_parent"
+      android:layout_height="1px"
+      android:background="#999999"/>
+
+    <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="?android:attr/selectableItemBackground"
+      android:padding="20dp">
+        <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerVertical="true"
+          android:orientation="vertical">
+            <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textColor="#000000"
+              android:textSize="16dp"
+              android:text="隐藏头像"/>
+            <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="3dp"
+              android:textColor="#666666"
+              android:text="打开之后将不显示作者头像"/>
+        </LinearLayout>
+
+        <Switch
+          android:id="@+id/switch_img"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerVertical="true"
+          android:layout_alignParentRight="true"/>
+
+    </RelativeLayout>
+
+    <View
+      android:layout_width="match_parent"
+      android:layout_height="1px"
+      android:background="#999999"/>
+
+    <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="?android:attr/selectableItemBackground"
+      android:padding="20dp">
+        <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerVertical="true"
+          android:orientation="vertical">
+            <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textColor="#000000"
+              android:textSize="16dp"
+              android:text="保存标签"/>
+            <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="3dp"
+              android:textColor="#666666"
+              android:text="打开之后会将标签分组保存到云端"/>
+        </LinearLayout>
+
+        <Switch
+          android:id="@+id/switch_save"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerVertical="true"
+          android:layout_alignParentRight="true"
+          android:checked="true"/>
+
+    </RelativeLayout>
+
+    <View
+      android:layout_width="match_parent"
+      android:layout_height="1px"
+      android:background="#999999"/>
+
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="Setting"
+        android:visibility="gone"/>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:visibility="gone">
+        <ToggleButton
+          android:id="@+id/toggleButton"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/text_margin" />
+
+        <Switch
+          android:id="@+id/switch1"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/text_margin"
+          android:checked="true"
+          android:switchPadding="@dimen/text_margin"
+          android:text="Switch" />
+
+        <CheckBox
+          android:id="@+id/checkBox1"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/text_margin"
+          android:checked="true"
+          android:text="check_box_1" />
+
+        <CheckBox
+          android:id="@+id/checkBox2"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="check_box_2" />
+
+        <RadioGroup
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/text_margin">
+
+            <RadioButton
+              android:id="@+id/radioButton1"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:checked="true"
+              android:text="_radio_button_1" />
+
+            <RadioButton
+              android:id="@+id/radioButton2"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="radio_button_2" />
+
+            <RadioButton
+              android:id="@+id/radioButton3"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="radio_button_3" />
+        </RadioGroup>
+    </LinearLayout>
+</LinearLayout>

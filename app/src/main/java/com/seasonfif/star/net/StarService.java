@@ -22,4 +22,8 @@ public interface StarService {
     @GET("/users/{username}/starred")
     Observable<Response<List<Repository>>> userStarredReposList(@Path("username") String username, @Query("sort") String sort,
                                               @Query("page") int page, @Query("per_page") int per_page);
+
+    @GET("/users/{username}/starred")
+    Observable<Response<List<Repository>>> userStarredReposListBy(@Path("username") String username, @Query("sort") String sort,
+        @Query("direction") String direction, @Query("page") int page, @Query("per_page") int per_page);
 }

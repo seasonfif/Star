@@ -5,6 +5,11 @@
         <item name="colorPrimary">@color/colorPrimary_indigo</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_indigo</item>
         <item name="colorAccent">@color/colorAccent_indigo</item>
+
+        <item name="app_primary_color">@color/colorPrimary_indigo</item>
+        <item name="app_primary_dark_color">@color/colorPrimaryDark_indigo</item>
+        <item name="app_accent_color">@color/colorAccent_indigo</item>
+        <item name="widgetBackground">@color/colorPrimary_indigo</item>
     </style>
 
     <style name="App_Cyan" parent="AppTheme">
@@ -12,6 +17,23 @@
         <item name="colorPrimary">@color/colorPrimary_cyan</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_cyan</item>
         <item name="colorAccent">@color/colorAccent_cyan</item>
+
+        <item name="app_primary_color">@color/colorPrimary_cyan</item>
+        <item name="app_primary_dark_color">@color/colorPrimaryDark_cyan</item>
+        <item name="app_accent_color">@color/colorAccent_cyan</item>
+        <item name="widgetBackground">@color/colorPrimary_cyan</item>
+    </style>
+
+    <style name="App_Red" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary_red</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_red</item>
+        <item name="colorAccent">@color/colorAccent_red</item>
+
+        <item name="app_primary_color">@color/colorPrimary_red</item>
+        <item name="app_primary_dark_color">@color/colorPrimaryDark_red</item>
+        <item name="app_accent_color">@color/colorAccent_red</item>
+        <item name="widgetBackground">@color/colorPrimary_red</item>
     </style>
 
     <style name="App_Black" parent="AppTheme">
@@ -19,12 +41,23 @@
         <item name="colorPrimary">@color/colorPrimary_black</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_black</item>
         <item name="colorAccent">@color/colorAccent_black</item>
+
+        <item name="app_primary_color">@color/colorPrimary_black</item>
+        <item name="app_primary_dark_color">@color/colorPrimaryDark_black</item>
+        <item name="app_accent_color">@color/colorAccent_black</item>
+        <item name="widgetBackground">@color/colorPrimary_black</item>
     </style>
 
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
+    </style>
+
+    <!-- ToolBar菜单样式 -->
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="actionMenuTextColor">@color/selector_green</item>
+        <item name="android:textSize">16dp</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -34,6 +67,14 @@
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <!--<item name="android:colorBackground">@drawable/selector_green</item>-->
+        <item name="android:textColor">@color/selector_green</item>
+        <item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item>
+    </style>
+
+    <style name="OverflowMenuStyle" parent="Widget.AppCompat.Light.PopupMenu.Overflow">
+        <item name="overlapAnchor">false</item>  <!--把该属性改为false即可使menu位置位于toolbar之下-->
+    </style>
 
 </resources>

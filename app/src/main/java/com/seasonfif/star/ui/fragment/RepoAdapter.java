@@ -11,6 +11,7 @@ import com.seasonfif.star.MyApplication;
 import com.seasonfif.star.R;
 import com.seasonfif.star.model.Repository;
 import com.seasonfif.star.utils.DateUtils;
+import com.seasonfif.star.utils.SettingShared;
 import com.seasonfif.star.widget.CircleImageView;
 
 import java.text.ParseException;
@@ -72,12 +73,20 @@ public class RepoAdapter extends BaseAdapter<Repository, RepoAdapter.ViewHolder>
         }
         holder.created_at.setText(mContext.getString(R.string.create_at, date_create));
         holder.updated_at.setText(mContext.getString(R.string.update_at, date_update));
-        holder.avatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
-        MyApplication.INSTANCE.loadAvatar(repository.owner.avatar_url, holder.avatar);
+
+        if (SettingShared.isHideAvatar(mContext)){
+            holder.avatar.setVisibility(View.GONE);
+            holder.avatar.setOnClickListener(null);
+        }else{
+            holder.avatar.setVisibility(View.VISIBLE);
+            holder.avatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                }
+            });
+            MyApplication.INSTANCE.loadAvatar(repository.owner.avatar_url, holder.avatar);
+        }
+
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

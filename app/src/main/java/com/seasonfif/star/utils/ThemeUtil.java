@@ -3,7 +3,10 @@ package com.seasonfif.star.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.os.Build;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
 import android.text.TextUtils;
@@ -16,6 +19,7 @@ import com.seasonfif.star.R;
 public class ThemeUtil {
 
     public static final String INDIGO = "indigo";
+    public static final String RED = "red";
     public static final String CYAN = "cyan";
     public static final String BLACK = "black";
 
@@ -38,6 +42,8 @@ public class ThemeUtil {
         switch (theme){
             case INDIGO:
                 return R.style.App_Indigo;
+            case RED:
+                return R.style.App_Red;
             case CYAN:
                 return R.style.App_Cyan;
             case BLACK:
@@ -57,5 +63,24 @@ public class ThemeUtil {
             activity.finish();
             activity.overridePendingTransition(0, 0);
         }
+    }
+
+    public static int getColor(@NonNull Context context, int attr){
+        int colorHex;
+        Resources resources = context.getResources();
+        try {
+            colorHex = resources.getColor(getResIdByAttr(context, attr));
+        }catch (Resources.NotFoundException e){
+            colorHex = R.color.colorAccent_indigo;
+        }
+        return colorHex;
+    }
+
+    public static int getResIdByAttr(@NonNull Context context, int attr) {
+        Resources.Theme theme = context.getTheme();
+        TypedArray typedArray = theme.obtainStyledAttributes(new int[]{attr});
+        int resId = typedArray.getResourceId(0, -1);
+        typedArray.recycle();
+        return resId;
     }
 }

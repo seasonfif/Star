@@ -87,9 +87,8 @@
             android:summary="@string/settings_preference_click_to_activity"
             android:title="Preference">
             <intent
-                android:action="com.eajy.materialdesigndemo.SETTING_START_ACTIVITY"
-                android:targetClass="com.eajy.materialdesigndemo.activity.FullscreenActivity"
-                android:targetPackage="com.eajy.materialdesigndemo" />
+                android:targetClass="com.seasonfif.star.ui.activity.MainActivity"
+                android:targetPackage="com.seasonfif.star" />
         </Preference>
     </PreferenceCategory>
 

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <attr name="app_primary_color" format="color|reference" />
+    <attr name="app_primary_dark_color" format="color|reference" />
+    <attr name="app_accent_color" format="color|reference" />
     <attr name="widgetBackground" format="color|reference" />
 </resources>

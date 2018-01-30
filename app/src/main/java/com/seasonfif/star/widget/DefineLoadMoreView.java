@@ -8,8 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.seasonfif.star.R;
+import com.seasonfif.star.utils.ThemeUtil;
 import com.yanzhenjie.loading.LoadingView;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
@@ -39,9 +39,9 @@ public class DefineLoadMoreView extends LinearLayout implements SwipeMenuRecycle
         mLoadingView = (LoadingView) findViewById(R.id.loading_view);
         mTvMessage = (TextView) findViewById(R.id.tv_message);
 
-        int color1 = ContextCompat.getColor(getContext(), R.color.colorPrimary_cyan);
-        int color2 = ContextCompat.getColor(getContext(), R.color.colorPrimaryDark_cyan);
-        int color3 = ContextCompat.getColor(getContext(), R.color.colorAccent_cyan);
+        int color1 = ThemeUtil.getColor(getContext(), R.attr.app_primary_color);
+        int color2 = ThemeUtil.getColor(getContext(), R.attr.app_primary_dark_color);
+        int color3 = ThemeUtil.getColor(getContext(), R.attr.app_accent_color);
 
         mLoadingView.setCircleColors(color1, color2, color3);
         setOnClickListener(this);

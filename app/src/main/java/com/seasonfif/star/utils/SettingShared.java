@@ -2,7 +2,6 @@ package com.seasonfif.star.utils;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-
 import com.seasonfif.star.utils.safeSP.SharedWrapper;
 
 public final class SettingShared {
@@ -12,7 +11,7 @@ public final class SettingShared {
     private static final String TAG = "SettingShared";
 
     private static final String KEY_THEME = "theme";
-    private static final String KEY_FAVORITE_LAUNCHER = "favorite_launcher";
+    private static final String KEY_HIDE_AVATAR = "hide_avatar";
     private static final String KEY_ENABLE_THEME_DARK = "enableThemeDark";
     private static final String KEY_HAS_NEW_VERSION = "has_new_version";
     private static final String KEY_ENABLE_NOTIFICATION = "enableNotification";
@@ -25,12 +24,12 @@ public final class SettingShared {
         SharedWrapper.with(context, TAG).setString(KEY_THEME, theme);
     }
 
-    public static boolean isEnableThemeDark(@NonNull Context context) {
-        return SharedWrapper.with(context, TAG).getBoolean(KEY_ENABLE_THEME_DARK, false);
+    public static boolean isHideAvatar(@NonNull Context context) {
+        return SharedWrapper.with(context, TAG).getBoolean(KEY_HIDE_AVATAR, false);
     }
 
-    public static void setEnableThemeDark(@NonNull Context context, boolean enable) {
-        SharedWrapper.with(context, TAG).setBoolean(KEY_ENABLE_THEME_DARK, enable);
+    public static void setHideAvatar(@NonNull Context context, boolean enable) {
+        SharedWrapper.with(context, TAG).setBoolean(KEY_HIDE_AVATAR, enable);
     }
 
     public static boolean hasNewVersion(@NonNull Context context) {

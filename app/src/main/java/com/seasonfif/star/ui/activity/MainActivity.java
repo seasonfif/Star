@@ -14,6 +14,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.seasonfif.star.R;
 import com.seasonfif.star.ui.fragment.OrderFragment;
+import com.seasonfif.star.ui.fragment.SettingFragment;
 import com.seasonfif.star.ui.fragment.StarFragment;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,15 +34,12 @@ public class MainActivity extends BaseActivity {
                     switch (item.getItemId()) {
                         case R.id.navigation_star:
                             pager.setCurrentItem(0);
-//                            ThemeUtil.changeTheme(MainActivity.this, ThemeUtil.INDIGO);
                             return true;
                         case R.id.navigation_order:
                             pager.setCurrentItem(1);
-//                            ThemeUtil.changeTheme(MainActivity.this, ThemeUtil.CYAN);
                             return true;
                         case R.id.navigation_setting:
                             pager.setCurrentItem(2);
-//                            ThemeUtil.changeTheme(MainActivity.this, ThemeUtil.BLACK);
                             return true;
                     }
                     return false;
@@ -92,7 +90,7 @@ public class MainActivity extends BaseActivity {
         pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         pagerAdapter.addFragment(StarFragment.newInstance("Star"));
         pagerAdapter.addFragment(OrderFragment.newInstance("Order"));
-        pagerAdapter.addFragment(OrderFragment.newInstance("Setting"));
+        pagerAdapter.addFragment(SettingFragment.newInstance());
         //预加载其余两个fragment，同时会缓存这三个fragment
         pager.setOffscreenPageLimit(2);
         pager.setAdapter(pagerAdapter);
