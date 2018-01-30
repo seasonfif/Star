@@ -3,7 +3,6 @@ package com.seasonfif.star.ui.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +17,7 @@ import butterknife.ButterKnife;
 import com.seasonfif.star.R;
 import com.seasonfif.star.database.DBEngine;
 import com.seasonfif.star.model.Repository;
+import com.seasonfif.star.ui.adapter.RepoAdapter;
 import com.seasonfif.star.ui.helper.DataObserver;
 import com.seasonfif.star.ui.helper.EventManager;
 import com.seasonfif.star.utils.Navigator;
@@ -86,7 +86,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         ButterKnife.bind(this, view);
 
         setHasOptionsMenu(true);
-        mToolbar.inflateMenu(R.menu.action_menu);
+        mToolbar.inflateMenu(R.menu.order_menu);
         mToolbar.setOnMenuItemClickListener(this);
 
         View customerView = initCustomerView();
@@ -254,8 +254,8 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
 
     @Override public boolean onMenuItemClick(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            Toast.makeText(getActivity(), "refresh", Toast.LENGTH_SHORT).show();
+        if (id == R.id.action_more) {
+            Toast.makeText(getActivity(), "more", Toast.LENGTH_SHORT).show();
             return true;
         }
         return false;

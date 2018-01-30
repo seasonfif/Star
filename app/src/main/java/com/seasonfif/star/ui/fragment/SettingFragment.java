@@ -5,12 +5,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.seasonfif.star.R;
@@ -23,11 +26,12 @@ import com.seasonfif.star.widget.CircleImageView;
  * Created by zhangqiang on 2018/1/29.
  */
 
-public class SettingFragment extends Fragment {
+public class SettingFragment extends Fragment implements Toolbar.OnMenuItemClickListener {
 
+  @BindView(R.id.toolbar)
+  Toolbar mToolbar;
   @BindView(R.id.theme_switch)
   CircleImageView themeSwitcher;
-
   @BindView(R.id.switch_img)
   Switch imgSwitcher;
 
@@ -51,6 +55,11 @@ public class SettingFragment extends Fragment {
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     ButterKnife.bind(this, view);
+
+    setHasOptionsMenu(true);
+    mToolbar.inflateMenu(R.menu.setting_menu);
+    mToolbar.setOnMenuItemClickListener(this);
+
     btn.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         Intent it = new Intent(getActivity(), SettingsActivity.class);
@@ -71,5 +80,14 @@ public class SettingFragment extends Fragment {
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Constants.HIDE_AVATAR));
       }
     });
+  }
+
+  @Override public boolean onMenuItemClick(MenuItem item) {
+    int id = item.getItemId();
+    if (id == R.id.action_refresh) {
+      Toast.makeText(getActivity(), "refresh", Toast.LENGTH_SHORT).show();
+      return true;
+    }
+    return false;
   }
 }

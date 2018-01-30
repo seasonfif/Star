@@ -1,4 +1,4 @@
-package com.seasonfif.star.ui.fragment;
+package com.seasonfif.star.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +16,6 @@ import com.seasonfif.star.widget.CircleImageView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**

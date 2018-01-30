@@ -1,15 +1,9 @@
 package com.seasonfif.star.ui.fragment;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,13 +15,13 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.seasonfif.star.R;
-import com.seasonfif.star.constant.Constants;
 import com.seasonfif.star.database.DBEngine;
 import com.seasonfif.star.model.Repository;
 import com.seasonfif.star.net.PaginationLink;
 import com.seasonfif.star.net.RelType;
 import com.seasonfif.star.net.RetrofitEngine;
 import com.seasonfif.star.net.StarService;
+import com.seasonfif.star.ui.adapter.RepoAdapter;
 import com.seasonfif.star.ui.helper.DataObserver;
 import com.seasonfif.star.ui.helper.EventManager;
 import com.seasonfif.star.utils.Navigator;
