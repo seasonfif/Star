@@ -5,13 +5,10 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +18,8 @@ import butterknife.ButterKnife;
 import com.seasonfif.star.R;
 import com.seasonfif.star.database.DBEngine;
 import com.seasonfif.star.model.Repository;
-import com.seasonfif.star.net.PaginationLink;
-import com.seasonfif.star.net.RelType;
-import com.seasonfif.star.net.RetrofitEngine;
-import com.seasonfif.star.net.StarService;
+import com.seasonfif.star.ui.helper.DataObserver;
+import com.seasonfif.star.ui.helper.EventManager;
 import com.seasonfif.star.utils.Navigator;
 import com.seasonfif.star.widget.DefineLoadMoreView;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
@@ -35,22 +30,18 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
-import java.util.ArrayList;
 import java.util.List;
-import retrofit2.Response;
 import rx.Observable;
-import rx.Scheduler;
 import rx.Subscriber;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by lxy on 2018/1/27.
  */
 
-public class OrderFragment extends Fragment {
+public class OrderFragment extends Fragment implements DataObserver<Repository>,
+    Toolbar.OnMenuItemClickListener {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -76,6 +67,7 @@ public class OrderFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventManager.getInstanse().register(this);
         Bundle bundle = getArguments();
         if (bundle != null){
             title = bundle.getString(KEY_TITLE);
@@ -95,6 +87,7 @@ public class OrderFragment extends Fragment {
 
         setHasOptionsMenu(true);
         mToolbar.inflateMenu(R.menu.action_menu);
+        mToolbar.setOnMenuItemClickListener(this);
 
         View customerView = initCustomerView();
         if (customerView != null) {
@@ -133,7 +126,6 @@ public class OrderFragment extends Fragment {
 
         repoAdapter = new RepoAdapter(getContext());
         mRecyclerView.setAdapter(repoAdapter);
-        loadData();
         return mRecyclerView;
     }
 
@@ -254,40 +246,18 @@ public class OrderFragment extends Fragment {
         }
     };
 
-    private Integer getLinkData(Response r) {
-        if (r != null) {
-            String link = r.headers().get("Link");
-            if (link != null) {
-                String[] parts = link.split(",");
-                try {
-                    PaginationLink paginationLink = new PaginationLink(parts[0]);
-                    return paginationLink.rel == RelType.next ? paginationLink.page : null;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+    @Override public void notifyChanged(int type, Repository repo) {
+        if (type == DataObserver.MULTI){
+            loadData();
         }
-        return null;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getActivity().getMenuInflater().inflate(R.menu.action_menu, menu);
-//        refreshItem = menu.findItem(R.id.action_refresh);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+    @Override public boolean onMenuItemClick(MenuItem item) {
         int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             Toast.makeText(getActivity(), "refresh", Toast.LENGTH_SHORT).show();
             return true;
         }
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 }

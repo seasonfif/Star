@@ -3,6 +3,7 @@ package com.seasonfif.star.database;
 import java.util.List;
 
 /**
+ * 数据库操作类
  * Created by zhangqiang on 2018/1/30.
  */
 

@@ -10,8 +10,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +17,13 @@ import android.widget.Toast;
 
 import com.seasonfif.star.R;
 import com.seasonfif.star.database.DBEngine;
-import com.seasonfif.star.database.GreenDaoManager;
 import com.seasonfif.star.model.Repository;
 import com.seasonfif.star.net.PaginationLink;
 import com.seasonfif.star.net.RelType;
 import com.seasonfif.star.net.RetrofitEngine;
 import com.seasonfif.star.net.StarService;
+import com.seasonfif.star.ui.helper.DataObserver;
+import com.seasonfif.star.ui.helper.EventManager;
 import com.seasonfif.star.utils.Navigator;
 import com.seasonfif.star.widget.DefineLoadMoreView;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
@@ -197,6 +196,7 @@ public class StarFragment extends Fragment implements Toolbar.OnMenuItemClickLis
             repo.avatar = repo.owner.avatar_url;
             DBEngine.insertOrReplace(repo);
         }
+        EventManager.getInstanse().notifyAll(DataObserver.MULTI, null);
     }
 
     /**
