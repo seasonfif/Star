@@ -40,7 +40,7 @@ import rx.schedulers.Schedulers;
  * Created by lxy on 2018/1/27.
  */
 
-public class OrderFragment extends Fragment implements DataObserver<Repository>,
+public class OrderFragment extends BaseFragment implements DataObserver<Repository>,
     Toolbar.OnMenuItemClickListener {
 
     @BindView(R.id.toolbar)
@@ -259,6 +259,10 @@ public class OrderFragment extends Fragment implements DataObserver<Repository>,
             return true;
         }
         return false;
+    }
+
+    @Override protected void refresh() {
+        loadData();
     }
 
     @Override public void onDestroyView() {

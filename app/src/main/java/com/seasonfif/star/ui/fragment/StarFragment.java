@@ -1,10 +1,15 @@
 package com.seasonfif.star.ui.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.seasonfif.star.R;
+import com.seasonfif.star.constant.Constants;
 import com.seasonfif.star.database.DBEngine;
 import com.seasonfif.star.model.Repository;
 import com.seasonfif.star.net.PaginationLink;
@@ -51,7 +57,7 @@ import rx.schedulers.Schedulers;
  * Created by lxy on 2018/1/27.
  */
 
-public class StarFragment extends Fragment implements Toolbar.OnMenuItemClickListener {
+public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClickListener {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -347,6 +353,10 @@ public class StarFragment extends Fragment implements Toolbar.OnMenuItemClickLis
 
 
     private void refreshWithLoading() {
+        getData(true);
+    }
+
+    @Override protected void refresh() {
         getData(true);
     }
 }

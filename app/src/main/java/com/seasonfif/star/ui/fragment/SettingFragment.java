@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.Switch;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.seasonfif.star.R;
+import com.seasonfif.star.constant.Constants;
 import com.seasonfif.star.ui.activity.SettingsActivity;
 import com.seasonfif.star.utils.SettingShared;
 import com.seasonfif.star.widget.CircleImageView;
@@ -66,6 +68,7 @@ public class SettingFragment extends Fragment {
     imgSwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         SettingShared.setHideAvatar(getActivity(), b);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Constants.HIDE_AVATAR));
       }
     });
   }
