@@ -49,4 +49,14 @@ public class EventManager {
         observer.notifyChanged(type, t);
       }
     }
+
+  /**
+   * 解除对数据更改事件的监听
+   * @param observer
+   */
+  public void unregister(DataObserver observer) {
+    if (observers.contains(observer)){
+      observers.remove(observer);
+    }
+  }
 }

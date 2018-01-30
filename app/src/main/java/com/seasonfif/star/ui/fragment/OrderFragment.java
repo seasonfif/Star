@@ -260,4 +260,9 @@ public class OrderFragment extends Fragment implements DataObserver<Repository>,
         }
         return false;
     }
+
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        EventManager.getInstanse().unregister(this);
+    }
 }
