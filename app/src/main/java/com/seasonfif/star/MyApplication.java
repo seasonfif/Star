@@ -29,7 +29,7 @@ public class MyApplication extends Application {
         super.onCreate();
         GreenDaoManager.getInstance();
         DebugDB.getAddressLog();
-        OAuthShared.saveToken(this, "169c40e59b9a8b3d4e38eebfa306cdb6921088a3");
+        OAuthShared.saveToken(this, "");
     }
 
     public void loadPicture(String url, ImageView view){

@@ -18,6 +18,8 @@ public class Repository implements Serializable{
     @Id
     public long id;
     public String name;
+    public String login;
+    public String avatar;
     public String language;
     public String description;
     public int stargazers_count;
@@ -28,12 +30,15 @@ public class Repository implements Serializable{
     @Transient
     public User owner;
 
-    @Generated(hash = 1428655450)
-    public Repository(long id, String name, String language, String description,
-            int stargazers_count, int forks_count, int watchers_count,
-            String created_at, String updated_at) {
+    @Generated(hash = 523914579)
+    public Repository(long id, String name, String login, String avatar,
+            String language, String description, int stargazers_count,
+            int forks_count, int watchers_count, String created_at,
+            String updated_at) {
         this.id = id;
         this.name = name;
+        this.login = login;
+        this.avatar = avatar;
         this.language = language;
         this.description = description;
         this.stargazers_count = stargazers_count;
@@ -119,10 +124,25 @@ public class Repository implements Serializable{
         this.updated_at = updated_at;
     }
 
+    public String getLogin() {
+        return this.login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getAvatar() {
+        return this.avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     public static class User {
         public int id;
         public String login;
-        public String name;
         public String avatar_url;
     }
 }

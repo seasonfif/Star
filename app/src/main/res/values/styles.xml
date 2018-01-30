@@ -54,12 +54,6 @@
 
     </style>
 
-    <!-- ToolBar菜单样式 -->
-    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
-        <item name="actionMenuTextColor">@color/selector_green</item>
-        <item name="android:textSize">16dp</item>
-    </style>
-
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

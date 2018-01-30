@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.seasonfif.star.R;
+import com.seasonfif.star.database.DBEngine;
 import com.seasonfif.star.database.GreenDaoManager;
 import com.seasonfif.star.model.Repository;
 import com.seasonfif.star.net.PaginationLink;
@@ -158,8 +159,9 @@ public class StarFragment extends Fragment implements Toolbar.OnMenuItemClickLis
                 .map(new Func1<Response<List<Repository>>, Pair<List<Repository>, Integer>>() {
                     @Override
                     public Pair<List<Repository>, Integer> call(Response<List<Repository>> response) {
-
-                        return new Pair<>(response.body(), getLinkData(response));
+                        List<Repository> repos = response.body();
+                        saveDB(repos);
+                        return new Pair<>(repos, getLinkData(response));
                     }
                 })
                 .subscribe(new Subscriber<Pair<List<Repository>, Integer>>() {
@@ -175,15 +177,15 @@ public class StarFragment extends Fragment implements Toolbar.OnMenuItemClickLis
 
                     @Override
                     public void onNext(Pair<List<Repository>, Integer> pair) {
-                        saveDB(pair.first);
+                        List<Repository> repos = pair.first;
                         List<Repository> datas = repoAdapter.mDataList;
                         if (pair.second != null) {
                             pageIndex = pair.second;
                         }
-                        datas.addAll(pair.first);
+                        datas.addAll(repos);
                         repoAdapter.notifyDataSetChanged(datas);
                         mContentContainer.setRefreshing(false);
-                        mRecyclerView.loadMoreFinish(pair.first == null || pair.first.size() == 0, pair.second != null);
+                        mRecyclerView.loadMoreFinish(repos == null || repos.size() == 0, pair.second != null);
                     }
                 });
     }
@@ -191,7 +193,9 @@ public class StarFragment extends Fragment implements Toolbar.OnMenuItemClickLis
     private void saveDB(List<Repository> repos) {
         if (repos == null || repos.size() == 0) return;
         for (Repository repo : repos) {
-            GreenDaoManager.getInstance().getDaoSession().insertOrReplace(repo);
+            repo.login = repo.owner.login;
+            repo.avatar = repo.owner.avatar_url;
+            DBEngine.insertOrReplace(repo);
         }
     }
 

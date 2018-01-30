@@ -1,10 +1,7 @@
 package com.seasonfif.star.ui.fragment;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -18,12 +15,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.seasonfif.star.R;
-import com.seasonfif.star.database.GreenDaoManager;
+import com.seasonfif.star.database.DBEngine;
 import com.seasonfif.star.model.Repository;
 import com.seasonfif.star.net.PaginationLink;
 import com.seasonfif.star.net.RelType;
@@ -42,6 +38,8 @@ import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Response;
+import rx.Observable;
+import rx.Scheduler;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -54,12 +52,8 @@ import rx.schedulers.Schedulers;
 
 public class OrderFragment extends Fragment {
 
-    @BindView(R.id.collapsingToolbarLayout)
-    CollapsingToolbarLayout mCollapsingToolbarLayout;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.header_container)
-    RelativeLayout mHeaderContainer;
     @BindView(R.id.fab)
     FloatingActionButton mFloatingActionButton;
     @BindView(R.id.content_container)
@@ -102,8 +96,6 @@ public class OrderFragment extends Fragment {
         setHasOptionsMenu(true);
         mToolbar.inflateMenu(R.menu.action_menu);
 
-        initAppBarLayout();
-
         View customerView = initCustomerView();
         if (customerView != null) {
             mContentContainer.addView(customerView);
@@ -141,67 +133,36 @@ public class OrderFragment extends Fragment {
 
         repoAdapter = new RepoAdapter(getContext());
         mRecyclerView.setAdapter(repoAdapter);
-        getData(true);
+        loadData();
         return mRecyclerView;
     }
 
-    public void initAppBarLayout() {
-        mCollapsingToolbarLayout.setTitle(title);
-        mCollapsingToolbarLayout.setExpandedTitleColor(Color.WHITE);
-        mCollapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
-    }
-
-    private void getData(final boolean refresh) {
-        if (refresh) {
-            pageIndex = 1;
-            if (repoAdapter.mDataList != null) {
-                repoAdapter.mDataList.clear();
-            } else {
-                repoAdapter.mDataList = new ArrayList<>();
+    private void loadData() {
+        Observable.create(new Observable.OnSubscribe<List<Repository>>(){
+            @Override public void call(Subscriber<? super List<Repository>> subscriber) {
+                List<Repository> list = DBEngine.loadAll(Repository.class);
+                subscriber.onNext(list);
+                subscriber.onCompleted();
             }
-        }
-        StarService service = RetrofitEngine.getRetrofit().create(StarService.class);
-        Subscription subscription = service.userStarredReposList("seasonfif", "updated", pageIndex, 10)
-            .subscribeOn(Schedulers.io())
+        })
             .observeOn(AndroidSchedulers.mainThread())
-            .map(new Func1<Response<List<Repository>>, Pair<List<Repository>, Integer>>() {
-                @Override
-                public Pair<List<Repository>, Integer> call(Response<List<Repository>> response) {
+            .subscribeOn(Schedulers.io())
+            .subscribe(new Subscriber<List<Repository>>() {
+            @Override public void onCompleted() {
 
-                    return new Pair<>(response.body(), getLinkData(response));
-                }
-            })
-            .subscribe(new Subscriber<Pair<List<Repository>, Integer>>() {
-                @Override
-                public void onCompleted() {
+            }
 
-                }
+            @Override public void onError(Throwable e) {
 
-                @Override
-                public void onError(Throwable e) {
-                    mContentContainer.setRefreshing(false);
-                }
+            }
 
-                @Override
-                public void onNext(Pair<List<Repository>, Integer> pair) {
-                    saveDB(pair.first);
-                    List<Repository> datas = repoAdapter.mDataList;
-                    if (pair.second != null) {
-                        pageIndex = pair.second;
-                    }
-                    datas.addAll(pair.first);
-                    repoAdapter.notifyDataSetChanged(datas);
-                    mContentContainer.setRefreshing(false);
-                    mRecyclerView.loadMoreFinish(pair.first == null || pair.first.size() == 0, pair.second != null);
-                }
-            });
-    }
-
-    private void saveDB(List<Repository> repos) {
-        if (repos == null || repos.size() == 0) return;
-        for (Repository repo : repos) {
-            GreenDaoManager.getInstance().getDaoSession().insertOrReplace(repo);
-        }
+            @Override public void onNext(List<Repository> repositories) {
+                repoAdapter.notifyDataSetChanged(repositories);
+                mContentContainer.setRefreshing(false);
+                Toast.makeText(getContext(), "Total:" + repositories.size(), Toast.LENGTH_SHORT).show();
+                mRecyclerView.loadMoreFinish(repositories == null || repositories.size() == 0, false);
+            }
+        });
     }
 
     /**
@@ -210,12 +171,12 @@ public class OrderFragment extends Fragment {
     private SwipeRefreshLayout.OnRefreshListener mRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            mRecyclerView.postDelayed(new Runnable() {
+            mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
-                    getData(true);
+                    loadData();
                 }
-            }, 1000); // 延时模拟请求服务器。
+            });
         }
     };
 
@@ -225,26 +186,12 @@ public class OrderFragment extends Fragment {
     private SwipeMenuRecyclerView.LoadMoreListener mLoadMoreListener = new SwipeMenuRecyclerView.LoadMoreListener() {
         @Override
         public void onLoadMore() {
-            mRecyclerView.postDelayed(new Runnable() {
+            mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
-                    getData(false);
-                    /*List<String> strings = createDataList(menuAdapter.getItemCount());
-//                    mDataList.addAll(strings);
-                    // notifyItemRangeInserted()或者notifyDataSetChanged().
-                    menuAdapter.notifyItemRangeInserted(mDataList.size() - strings.size(), strings.size());
 
-                    // 数据完更多数据，一定要掉用这个方法。
-                    // 第一个参数：表示此次数据是否为空。
-                    // 第二个参数：表示是否还有更多数据。
-                    mRecyclerView.loadMoreFinish(false, true);
-
-                    // 如果加载失败调用下面的方法，传入errorCode和errorMessage。
-                    // errorCode随便传，你自定义LoadMoreView时可以根据errorCode判断错误类型。
-                    // errorMessage是会显示到loadMoreView上的，用户可以看到。
-                    // mRecyclerView.loadMoreError(0, "请求网络失败");*/
                 }
-            }, 1000);
+            });
         }
     };
 

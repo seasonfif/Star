@@ -14,7 +14,7 @@ public class Navigator {
 
     Intent it = new Intent();
     it.setAction("com.seasonfif.github.repo.detail");
-    it.putExtra("owner", repository.owner.login);
+    it.putExtra("owner", repository.login);
     it.putExtra("repoName", repository.name);
     activity.startActivity(it);
   }

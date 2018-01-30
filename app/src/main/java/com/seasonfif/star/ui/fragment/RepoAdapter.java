@@ -84,7 +84,7 @@ public class RepoAdapter extends BaseAdapter<Repository, RepoAdapter.ViewHolder>
                 public void onClick(View v) {
                 }
             });
-            MyApplication.INSTANCE.loadAvatar(repository.owner.avatar_url, holder.avatar);
+            MyApplication.INSTANCE.loadAvatar(repository.avatar, holder.avatar);
         }
 
     }

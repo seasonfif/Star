@@ -13,33 +13,12 @@
         android:theme="@style/AppTheme.AppBarOverlay"
         android:visibility="visible">
 
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fitsSystemWindows="true"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:layout_collapseParallaxMultiplier="0.8"
-            app:contentScrim="?attr/widgetBackground"
-            app:expandedTitleMarginStart="20dp"
-            app:expandedTitleMarginEnd="1dp">
-
-            <RelativeLayout
-                android:id="@+id/header_container"
-                android:layout_width="match_parent"
-                android:layout_height="225dp"
-                android:scaleType="centerCrop"
-                android:fitsSystemWindows="true"
-                android:background="?attr/widgetBackground"
-                app:layout_collapseMode="parallax"/>
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:layout_collapseMode="pin"/>
-        </android.support.design.widget.CollapsingToolbarLayout>
+        <android.support.v7.widget.Toolbar
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="?attr/actionBarSize"
+          app:popupTheme="@style/AppTheme.PopupOverlay"
+          app:layout_scrollFlags="scroll|enterAlways"/>
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
