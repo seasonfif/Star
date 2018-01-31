@@ -76,6 +76,17 @@ public class ThemeUtil {
         return colorHex;
     }
 
+    public static float getDimension(@NonNull Context context, int attr){
+        float colorHex;
+        Resources resources = context.getResources();
+        try {
+            colorHex = resources.getDimension(getResIdByAttr(context, attr));
+        }catch (Resources.NotFoundException e){
+            colorHex = 0f;
+        }
+        return colorHex;
+    }
+
     public static int getResIdByAttr(@NonNull Context context, int attr) {
         Resources.Theme theme = context.getTheme();
         TypedArray typedArray = theme.obtainStyledAttributes(new int[]{attr});

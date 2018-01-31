@@ -11,11 +11,17 @@ import com.seasonfif.star.model.Repository;
 public class Navigator {
 
   public static void openRepoProfile(Activity activity, Repository repository){
-
     Intent it = new Intent();
     it.setAction("com.seasonfif.github.repo.detail");
     it.putExtra("owner", repository.login);
     it.putExtra("repoName", repository.name);
+    activity.startActivity(it);
+  }
+
+  public static void openUserProfile(Activity activity, String name){
+    Intent it = new Intent();
+    it.setAction("com.seasonfif.github.user.detail");
+    it.putExtra("name", name);
     activity.startActivity(it);
   }
 }
