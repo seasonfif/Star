@@ -46,6 +46,8 @@ public class SettingFragment extends Fragment implements Toolbar.OnMenuItemClick
   CircleImageView themeSwitcher;
   @BindView(R.id.switch_img)
   Switch imgSwitcher;
+  @BindView(R.id.switch_openwith)
+  Switch openwithSwitcher;
 
   public static Fragment newInstance() {
     return new SettingFragment();
@@ -89,6 +91,13 @@ public class SettingFragment extends Fragment implements Toolbar.OnMenuItemClick
       @Override public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         SettingShared.setHideAvatar(getActivity(), b);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Constants.HIDE_AVATAR));
+      }
+    });
+
+    openwithSwitcher.setChecked(SettingShared.isOpenWithGithub(getContext()));
+    openwithSwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+      @Override public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+        SettingShared.setOpenWithGithub(getActivity(), b);
       }
     });
   }

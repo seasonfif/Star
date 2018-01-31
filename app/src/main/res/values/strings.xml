@@ -11,6 +11,8 @@
   <string name="create_at">Create at %s</string>
   <string name="update_at">Update at %s</string>
 
+  <string name="no_browser_install_in_system">系统中没有安装浏览器</string>
+
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
