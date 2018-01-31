@@ -1,5 +1,8 @@
 package com.seasonfif.star.ui.fragment;
 
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +33,8 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuView;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuViewBindListener;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 import java.util.List;
 import rx.Observable;
@@ -116,6 +122,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
 
         mRecyclerView.setSwipeItemClickListener(mItemClickListener);
         mRecyclerView.setSwipeMenuCreator(mSwipeMenuCreator);
+        mRecyclerView.setSwipeMenuViewBindListener(mSwipeMenuViewBindListener);
         mRecyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
 
         // 自定义的核心就是DefineLoadMoreView类。
@@ -132,9 +139,14 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
     private void loadData() {
         Observable.create(new Observable.OnSubscribe<List<Repository>>(){
             @Override public void call(Subscriber<? super List<Repository>> subscriber) {
-                List<Repository> list = DBEngine.loadAll(Repository.class);
-                subscriber.onNext(list);
-                subscriber.onCompleted();
+                try {
+                    List<Repository> list = DBEngine.loadAll(Repository.class);
+                    subscriber.onNext(list);
+                    subscriber.onCompleted();
+                }catch (Exception e){
+                    subscriber.onError(e);
+                }
+
             }
         })
             .observeOn(AndroidSchedulers.mainThread())
@@ -145,7 +157,8 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
             }
 
             @Override public void onError(Throwable e) {
-
+                mContentContainer.setRefreshing(false);
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
             @Override public void onNext(List<Repository> repositories) {
@@ -232,7 +245,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
 
             SwipeMenuItem addItem = new SwipeMenuItem(getContext())
                     .setBackground(R.drawable.selector_green)
-                    .setImage(R.drawable.ic_launcher_round)
+                    .setImage(R.drawable.ic_like)
                     .setWidth(width)
                     .setHeight(height);
             swipeLeftMenu.addMenuItem(addItem); // 添加菜单到左侧。
@@ -243,6 +256,17 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
                     .setWidth(width)
                     .setHeight(height);
             swipeRightMenu.addMenuItem(closeItem); // 添加菜单到右侧。
+        }
+    };
+
+    private SwipeMenuViewBindListener mSwipeMenuViewBindListener = new SwipeMenuViewBindListener() {
+        @Override public void onBindMenuView(int position, int menuPosition, View view) {
+            Repository repository = repoAdapter.getItem(position);
+            SwipeMenuBridge menuBridge = (SwipeMenuBridge) view.getTag();
+            if (position%2 == 0 && menuBridge.getDirection() == SwipeMenuRecyclerView.LEFT_DIRECTION){
+                ImageView imageView = menuBridge.getImageView();
+                imageView.setImageResource(R.drawable.ic_logout);
+            }
         }
     };
 

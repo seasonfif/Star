@@ -44,6 +44,7 @@ public class SwipeAdapterWrapper extends RecyclerView.Adapter<RecyclerView.ViewH
     private SwipeMenuItemClickListener mSwipeMenuItemClickListener;
     private SwipeItemClickListener mSwipeItemClickListener;
     private SwipeItemLongClickListener mSwipeItemLongClickListener;
+    private SwipeMenuViewBindListener mSwipeMenuViewBindListener;
 
     SwipeAdapterWrapper(Context context, RecyclerView.Adapter adapter) {
         this.mInflater = LayoutInflater.from(context);
@@ -78,6 +79,11 @@ public class SwipeAdapterWrapper extends RecyclerView.Adapter<RecyclerView.ViewH
 
     void setSwipeItemLongClickListener(SwipeItemLongClickListener swipeItemLongClickListener) {
         this.mSwipeItemLongClickListener = swipeItemLongClickListener;
+    }
+
+    public void setSwipeMenuViewBindListener(
+        SwipeMenuViewBindListener mSwipeMenuViewBindListener) {
+        this.mSwipeMenuViewBindListener = mSwipeMenuViewBindListener;
     }
 
     @Override
@@ -188,7 +194,13 @@ public class SwipeAdapterWrapper extends RecyclerView.Adapter<RecyclerView.ViewH
             for (int i = 0; i < childCount; i++) {
                 View childView = swipeMenuLayout.getChildAt(i);
                 if (childView instanceof SwipeMenuView) {
-                    ((SwipeMenuView) childView).bindViewHolder(holder);
+                    SwipeMenuView menuView = (SwipeMenuView) childView;
+                    menuView.bindViewHolder(holder);
+                    for (int j = 0; j < menuView.getChildCount(); j++) {
+                        if (mSwipeMenuViewBindListener != null){
+                            mSwipeMenuViewBindListener.onBindMenuView(position, j, menuView.getChildAt(j));
+                        }
+                    }
                 }
             }
         }

@@ -30,11 +30,22 @@ public class Repository implements Serializable{
     @Transient
     public User owner;
 
-    @Generated(hash = 523914579)
+    /**
+     * like:1
+     * unlike:0
+     */
+    public int like;
+
+    /**
+     *  分组信息
+     */
+    public String group;
+
+    @Generated(hash = 679192990)
     public Repository(long id, String name, String login, String avatar,
             String language, String description, int stargazers_count,
             int forks_count, int watchers_count, String created_at,
-            String updated_at) {
+            String updated_at, int like, String group) {
         this.id = id;
         this.name = name;
         this.login = login;
@@ -46,6 +57,8 @@ public class Repository implements Serializable{
         this.watchers_count = watchers_count;
         this.created_at = created_at;
         this.updated_at = updated_at;
+        this.like = like;
+        this.group = group;
     }
 
     @Generated(hash = 984204935)
@@ -138,6 +151,22 @@ public class Repository implements Serializable{
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public int getLike() {
+        return this.like;
+    }
+
+    public void setLike(int like) {
+        this.like = like;
+    }
+
+    public String getGroup() {
+        return this.group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
     }
 
     public static class User {

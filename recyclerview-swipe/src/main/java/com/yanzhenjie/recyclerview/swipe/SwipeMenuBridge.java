@@ -85,6 +85,10 @@ public final class SwipeMenuBridge {
         return this;
     }
 
+    public ImageView getImageView() {
+        return mImageView;
+    }
+
     @SwipeMenuRecyclerView.DirectionMode
     public int getDirection() {
         return mDirection;

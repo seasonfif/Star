@@ -78,6 +78,7 @@ public class SwipeMenuRecyclerView extends RecyclerView {
     private SwipeMenuItemClickListener mSwipeMenuItemClickListener;
     private SwipeItemClickListener mSwipeItemClickListener;
     private SwipeItemLongClickListener mSwipeItemLongClickListener;
+    private SwipeMenuViewBindListener mSwipeMenuViewBindListener;
 
     private SwipeAdapterWrapper mAdapterWrapper;
 
@@ -237,6 +238,11 @@ public class SwipeMenuRecyclerView extends RecyclerView {
         this.mSwipeItemLongClickListener = new ItemLongClick(this, itemLongClickListener);
     }
 
+    public void setSwipeMenuViewBindListener(
+        SwipeMenuViewBindListener mSwipeMenuViewBindListener) {
+        this.mSwipeMenuViewBindListener = mSwipeMenuViewBindListener;
+    }
+
     private static class ItemLongClick implements SwipeItemLongClickListener {
         private SwipeMenuRecyclerView mRecyclerView;
         private SwipeItemLongClickListener mCallback;
@@ -336,6 +342,7 @@ public class SwipeMenuRecyclerView extends RecyclerView {
             mAdapterWrapper = new SwipeAdapterWrapper(getContext(), adapter);
             mAdapterWrapper.setSwipeItemClickListener(mSwipeItemClickListener);
             mAdapterWrapper.setSwipeItemLongClickListener(mSwipeItemLongClickListener);
+            mAdapterWrapper.setSwipeMenuViewBindListener(mSwipeMenuViewBindListener);
             mAdapterWrapper.setSwipeMenuCreator(mSwipeMenuCreator);
             mAdapterWrapper.setSwipeMenuItemClickListener(mSwipeMenuItemClickListener);
 

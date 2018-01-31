@@ -14,7 +14,7 @@ android {
     //greendao配置
     greendao {
         //版本号，升级时可配置
-        schemaVersion 1
+        schemaVersion 2
         //由GreenDao自动生成代码所在的包名，默认的是在项目包下面新建一个gen
         daoPackage 'com.seasonfif.star.database.gen'
         //设置自动生成代码的目录
