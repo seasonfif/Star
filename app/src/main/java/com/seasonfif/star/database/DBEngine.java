@@ -1,5 +1,7 @@
 package com.seasonfif.star.database;
 
+import com.seasonfif.star.database.gen.RepositoryDao;
+import com.seasonfif.star.model.Repository;
 import java.util.List;
 
 /**
@@ -23,7 +25,11 @@ public class DBEngine {
     });
   }
 
-  public static <T> List<T> loadAll(Class cls){
+  public static <T> List<T> loadAll(Class<T> cls){
     return GreenDaoManager.getInstance().getDaoSession().loadAll(cls);
+  }
+
+  public static <T> List<T> loadByLike(Class<T> cls, int key) {
+    return GreenDaoManager.getInstance().getDaoSession().queryBuilder(cls).where(RepositoryDao.Properties.Like.eq(key)).list();
   }
 }

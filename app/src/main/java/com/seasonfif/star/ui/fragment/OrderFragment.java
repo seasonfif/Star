@@ -1,8 +1,6 @@
 package com.seasonfif.star.ui.fragment;
 
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +23,7 @@ import com.seasonfif.star.ui.adapter.RepoAdapter;
 import com.seasonfif.star.ui.helper.DataObserver;
 import com.seasonfif.star.ui.helper.EventManager;
 import com.seasonfif.star.utils.Navigator;
+import com.seasonfif.star.utils.ThemeUtil;
 import com.seasonfif.star.widget.DefineLoadMoreView;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
@@ -33,7 +32,6 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuView;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuViewBindListener;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 import java.util.List;
@@ -140,7 +138,8 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         Observable.create(new Observable.OnSubscribe<List<Repository>>(){
             @Override public void call(Subscriber<? super List<Repository>> subscriber) {
                 try {
-                    List<Repository> list = DBEngine.loadAll(Repository.class);
+                    //List<Repository> list = DBEngine.loadAll(Repository.class);
+                    List<Repository> list = DBEngine.loadByLike(Repository.class, 1);
                     subscriber.onNext(list);
                     subscriber.onCompleted();
                 }catch (Exception e){
@@ -216,17 +215,30 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
     private SwipeMenuItemClickListener mMenuItemClickListener = new SwipeMenuItemClickListener() {
         @Override
         public void onItemClick(SwipeMenuBridge menuBridge) {
-            menuBridge.closeMenu();
+            //menuBridge.closeMenu();
 
             int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
             int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
             int menuPosition = menuBridge.getPosition(); // 菜单在RecyclerView的Item中的Position。
 
-            if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
-                Toast.makeText(getContext(), "list第" + adapterPosition + "; 右侧菜单第" + menuPosition, Toast.LENGTH_SHORT).show();
-            } else if (direction == SwipeMenuRecyclerView.LEFT_DIRECTION) {
-                Toast.makeText(getContext(), "list第" + adapterPosition + "; 左侧菜单第" + menuPosition, Toast.LENGTH_SHORT).show();
+            Repository repository = repoAdapter.getItem(adapterPosition);
+            //左边like按钮点击事件
+            if (direction == SwipeMenuRecyclerView.LEFT_DIRECTION){
+                if (repository.like == 0){
+                    repository.like = 1;
+                    menuBridge.getImageView().setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.RED));
+                }else{
+                    repository.like = 0;
+                    menuBridge.getImageView().setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.WHITE));
+                }
+                DBEngine.insertOrReplace(repository);
             }
+
+            //if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
+            //    Toast.makeText(getContext(), "list第" + adapterPosition + "; 右侧菜单第" + menuPosition, Toast.LENGTH_SHORT).show();
+            //} else if (direction == SwipeMenuRecyclerView.LEFT_DIRECTION) {
+            //    Toast.makeText(getContext(), "list第" + adapterPosition + "; 左侧菜单第" + menuPosition, Toast.LENGTH_SHORT).show();
+            //}
         }
     };
 
@@ -244,14 +256,14 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
 
             SwipeMenuItem addItem = new SwipeMenuItem(getContext())
-                    .setBackground(R.drawable.selector_green)
+                    .setBackgroundColorResource(ThemeUtil.getResIdByAttr(getActivity(), R.attr.app_accent_color))
                     .setImage(R.drawable.ic_like)
                     .setWidth(width)
                     .setHeight(height);
             swipeLeftMenu.addMenuItem(addItem); // 添加菜单到左侧。
 
             SwipeMenuItem closeItem = new SwipeMenuItem(getContext())
-                    .setBackground(R.drawable.selector_green)
+                    .setBackgroundColorResource(ThemeUtil.getResIdByAttr(getActivity(), R.attr.app_accent_color))
                     .setImage(R.drawable.ic_launcher)
                     .setWidth(width)
                     .setHeight(height);
@@ -263,15 +275,22 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         @Override public void onBindMenuView(int position, int menuPosition, View view) {
             Repository repository = repoAdapter.getItem(position);
             SwipeMenuBridge menuBridge = (SwipeMenuBridge) view.getTag();
-            if (position%2 == 0 && menuBridge.getDirection() == SwipeMenuRecyclerView.LEFT_DIRECTION){
-                ImageView imageView = menuBridge.getImageView();
-                imageView.setImageResource(R.drawable.ic_logout);
+
+            ImageView imageView = menuBridge.getImageView();
+            if (menuBridge.getDirection() == SwipeMenuRecyclerView.LEFT_DIRECTION){
+                if (repository.like == 1){
+                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.RED));
+                }else{
+                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.WHITE));
+                }
             }
         }
     };
 
     @Override public void notifyChanged(int type, Repository repo) {
         if (type == DataObserver.MULTI){
+            loadData();
+        } else if (type == DataObserver.SINGLE){
             loadData();
         }
     }

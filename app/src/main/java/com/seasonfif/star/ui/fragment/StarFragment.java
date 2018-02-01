@@ -1,5 +1,6 @@
 package com.seasonfif.star.ui.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -12,8 +13,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.seasonfif.star.R;
 import com.seasonfif.star.database.DBEngine;
 import com.seasonfif.star.model.Repository;
@@ -25,6 +28,7 @@ import com.seasonfif.star.ui.adapter.RepoAdapter;
 import com.seasonfif.star.ui.helper.DataObserver;
 import com.seasonfif.star.ui.helper.EventManager;
 import com.seasonfif.star.utils.Navigator;
+import com.seasonfif.star.utils.ThemeUtil;
 import com.seasonfif.star.widget.DefineLoadMoreView;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
@@ -33,13 +37,10 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuViewBindListener;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import retrofit2.Response;
 import rx.Subscriber;
 import rx.Subscription;
@@ -128,6 +129,7 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
 
         mRecyclerView.setSwipeItemClickListener(mItemClickListener);
         mRecyclerView.setSwipeMenuCreator(mSwipeMenuCreator);
+        mRecyclerView.setSwipeMenuViewBindListener(mSwipeMenuViewBindListener);
         mRecyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
 
         // 自定义的核心就是DefineLoadMoreView类。
@@ -259,17 +261,31 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
     private SwipeMenuItemClickListener mMenuItemClickListener = new SwipeMenuItemClickListener() {
         @Override
         public void onItemClick(SwipeMenuBridge menuBridge) {
-            menuBridge.closeMenu();
+            //menuBridge.closeMenu();
 
             int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
             int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
             int menuPosition = menuBridge.getPosition(); // 菜单在RecyclerView的Item中的Position。
 
-            if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
+            Repository repository = repoAdapter.getItem(adapterPosition);
+            //左边like按钮点击事件
+            if (direction == SwipeMenuRecyclerView.LEFT_DIRECTION){
+                if (repository.like == 0){
+                    repository.like = 1;
+                    menuBridge.getImageView().setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.RED));
+                }else{
+                    repository.like = 0;
+                    menuBridge.getImageView().setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.WHITE));
+                }
+                DBEngine.insertOrReplace(repository);
+                EventManager.getInstanse().notifyAll(DataObserver.SINGLE, repository);
+            }
+
+            /*if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
                 Toast.makeText(getContext(), "list第" + adapterPosition + "; 右侧菜单第" + menuPosition, Toast.LENGTH_SHORT).show();
             } else if (direction == SwipeMenuRecyclerView.LEFT_DIRECTION) {
                 Toast.makeText(getContext(), "list第" + adapterPosition + "; 左侧菜单第" + menuPosition, Toast.LENGTH_SHORT).show();
-            }
+            }*/
         }
     };
 
@@ -287,18 +303,34 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
 
             SwipeMenuItem addItem = new SwipeMenuItem(getContext())
-                    .setBackground(R.drawable.selector_green)
-                    .setImage(R.drawable.ic_launcher_round)
-                    .setWidth(width)
-                    .setHeight(height);
+                .setBackgroundColorResource(ThemeUtil.getResIdByAttr(getActivity(), R.attr.app_accent_color))
+                .setImage(R.drawable.ic_like)
+                .setWidth(width)
+                .setHeight(height);
             swipeLeftMenu.addMenuItem(addItem); // 添加菜单到左侧。
 
             SwipeMenuItem closeItem = new SwipeMenuItem(getContext())
-                    .setBackground(R.drawable.selector_green)
-                    .setImage(R.drawable.ic_launcher)
-                    .setWidth(width)
-                    .setHeight(height);
+                .setBackgroundColorResource(ThemeUtil.getResIdByAttr(getActivity(), R.attr.app_accent_color))
+                .setImage(R.drawable.ic_launcher)
+                .setWidth(width)
+                .setHeight(height);
             swipeRightMenu.addMenuItem(closeItem); // 添加菜单到右侧。
+        }
+    };
+
+    private SwipeMenuViewBindListener mSwipeMenuViewBindListener = new SwipeMenuViewBindListener() {
+        @Override public void onBindMenuView(int position, int menuPosition, View view) {
+            Repository repository = repoAdapter.getItem(position);
+            SwipeMenuBridge menuBridge = (SwipeMenuBridge) view.getTag();
+
+            ImageView imageView = menuBridge.getImageView();
+            if (menuBridge.getDirection() == SwipeMenuRecyclerView.LEFT_DIRECTION){
+                if (repository.like == 1){
+                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.RED));
+                }else{
+                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.WHITE));
+                }
+            }
         }
     };
 

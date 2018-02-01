@@ -5,12 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.text.TextUtils;
 
+import com.seasonfif.star.MyApplication;
 import com.seasonfif.star.R;
 
 /**
@@ -93,5 +96,12 @@ public class ThemeUtil {
         int resId = typedArray.getResourceId(0, -1);
         typedArray.recycle();
         return resId;
+    }
+
+    public static Drawable tintDrawable(int res, int color) {
+        Drawable dr = MyApplication.INSTANCE.getResources().getDrawable(res);
+        final Drawable wrappedDrawable = DrawableCompat.wrap(dr);
+        DrawableCompat.setTint(wrappedDrawable, color);
+        return wrappedDrawable;
     }
 }
