@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.IdRes;
@@ -79,15 +81,26 @@ public class ThemeUtil {
         return colorHex;
     }
 
-    public static float getDimension(@NonNull Context context, int attr){
-        float colorHex;
+    public static Drawable getDrawable(Context context, int attr) {
+        Drawable drawable;
         Resources resources = context.getResources();
         try {
-            colorHex = resources.getDimension(getResIdByAttr(context, attr));
+            drawable = resources.getDrawable(getResIdByAttr(context, attr));
         }catch (Resources.NotFoundException e){
-            colorHex = 0f;
+            drawable = new ColorDrawable(Color.WHITE);
         }
-        return colorHex;
+        return drawable;
+    }
+
+    public static float getDimension(@NonNull Context context, int attr){
+        float dimen;
+        Resources resources = context.getResources();
+        try {
+            dimen = resources.getDimension(getResIdByAttr(context, attr));
+        }catch (Resources.NotFoundException e){
+            dimen = 0f;
+        }
+        return dimen;
     }
 
     public static int getResIdByAttr(@NonNull Context context, int attr) {

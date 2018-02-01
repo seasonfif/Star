@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -33,7 +35,10 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuViewBindListener;
+import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
+import com.yanzhenjie.recyclerview.swipe.touch.OnItemStateChangedListener;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
+import java.util.Collections;
 import java.util.List;
 import rx.Observable;
 import rx.Subscriber;
@@ -118,10 +123,15 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.addItemDecoration(new DefaultItemDecoration(ContextCompat.getColor(getContext(), R.color.divider_color)));
 
+        //打开长按拖拽的开关
+        mRecyclerView.setLongPressDragEnabled(true);
+
         mRecyclerView.setSwipeItemClickListener(mItemClickListener);
         mRecyclerView.setSwipeMenuCreator(mSwipeMenuCreator);
         mRecyclerView.setSwipeMenuViewBindListener(mSwipeMenuViewBindListener);
         mRecyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
+        mRecyclerView.setOnItemMoveListener(mOnItemMoveListener);
+        mRecyclerView.setOnItemStateChangedListener(mOnItemStateChangedListener);
 
         // 自定义的核心就是DefineLoadMoreView类。
         DefineLoadMoreView loadMoreView = new DefineLoadMoreView(getContext());
@@ -283,6 +293,48 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
                 }else{
                     imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.WHITE));
                 }
+            }
+        }
+    };
+
+    private OnItemMoveListener mOnItemMoveListener = new OnItemMoveListener() {
+        @Override public boolean onItemMove(RecyclerView.ViewHolder srcHolder,
+            RecyclerView.ViewHolder targetHolder) {
+            // 不同的ViewType不能拖拽换位置。
+            if (srcHolder.getItemViewType() != targetHolder.getItemViewType()) return false;
+
+            // 真实的Position：通过ViewHolder拿到的position都需要减掉HeadView的数量。
+            int fromPosition = srcHolder.getAdapterPosition() - mRecyclerView.getHeaderItemCount();
+            int toPosition = targetHolder.getAdapterPosition() - mRecyclerView.getHeaderItemCount();
+
+            Collections.swap(repoAdapter.mDataList, fromPosition, toPosition);
+            repoAdapter.notifyItemMoved(fromPosition, toPosition);
+            return true;
+        }
+
+        @Override public void onItemDismiss(RecyclerView.ViewHolder srcHolder) {
+
+        }
+    };
+
+    /**
+     * Item的拖拽/侧滑删除时，手指状态发生变化监听。
+     */
+    private OnItemStateChangedListener mOnItemStateChangedListener = new OnItemStateChangedListener() {
+        @Override
+        public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+            if (actionState == OnItemStateChangedListener.ACTION_STATE_DRAG) {
+                mToolbar.setSubtitle("状态：拖拽");
+
+                // 拖拽的时候背景就透明了，这里我们可以添加一个特殊背景。
+                viewHolder.itemView.setBackgroundColor(ThemeUtil.getColor(getContext(), R.attr.app_accent_color));
+            } else if (actionState == OnItemStateChangedListener.ACTION_STATE_SWIPE) {
+                mToolbar.setSubtitle("状态：滑动删除");
+            } else if (actionState == OnItemStateChangedListener.ACTION_STATE_IDLE) {
+                mToolbar.setSubtitle("状态：手指松开");
+
+                // 在手松开的时候还原背景。
+                ViewCompat.setBackground(viewHolder.itemView, ThemeUtil.getDrawable(getContext(), android.R.attr.selectableItemBackground));
             }
         }
     };
