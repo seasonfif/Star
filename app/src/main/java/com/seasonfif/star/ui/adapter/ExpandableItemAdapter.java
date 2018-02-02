@@ -13,7 +13,7 @@ import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.seasonfif.star.MyApplication;
 import com.seasonfif.star.R;
 import com.seasonfif.star.model.Level0Item;
-import com.seasonfif.star.model.Level1Item;
+import com.seasonfif.star.model.Repository;
 import com.seasonfif.star.utils.ThemeUtil;
 import com.seasonfif.star.utils.ToastUtils;
 import java.util.List;
@@ -74,7 +74,7 @@ public class ExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEn
           });
           break;
         case TYPE_LEVEL_1:
-          final Level1Item lv1 = (Level1Item) item;
+          final Repository lv1 = (Repository) item;
           holder.setText(R.id.tv_title, lv1.name);
           holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {

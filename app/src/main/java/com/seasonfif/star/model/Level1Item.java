@@ -1,6 +1,5 @@
 package com.seasonfif.star.model;
 
-import com.chad.library.adapter.base.entity.AbstractExpandableItem;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.seasonfif.star.ui.adapter.ExpandableItemAdapter;
 

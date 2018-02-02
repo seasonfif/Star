@@ -17,14 +17,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.seasonfif.star.R;
 import com.seasonfif.star.database.DBEngine;
 import com.seasonfif.star.model.Level0Item;
-import com.seasonfif.star.model.Level1Item;
 import com.seasonfif.star.model.Repository;
 import com.seasonfif.star.ui.adapter.ExpandableItemAdapter;
 import com.seasonfif.star.ui.adapter.RepoAdapter;
@@ -170,7 +168,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
 
         //mRecyclerView.setSwipeItemClickListener(mItemClickListener);
         mRecyclerView.setSwipeMenuCreator(mSwipeMenuCreator);
-        //mRecyclerView.setSwipeMenuViewBindListener(mSwipeMenuViewBindListener);
+        mRecyclerView.setSwipeMenuViewBindListener(mSwipeMenuViewBindListener);
         //mRecyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
         mRecyclerView.setOnItemMoveListener(mOnItemMoveListener);
         mRecyclerView.setOnItemStateChangedListener(mOnItemStateChangedListener);
@@ -246,25 +244,25 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         for (int i = 0; i < rawList.size(); i++) {
             Repository repository = rawList.get(i);
             if (repository.like == 1){
-                lv0like.addSubItem(new Level1Item(repository.name));
+                lv0like.addSubItem(repository);
             }
 
             if (!TextUtils.isEmpty(repository.group)){
                 String tag = repository.group;
                 if (tags.containsKey(tag)){
                     Level0Item lv0 = tags.get(tag);
-                    lv0.addSubItem(new Level1Item(repository.name));
+                    lv0.addSubItem(repository);
                 }else{
                     Level0Item lv0 = new Level0Item();
                     lv0.setGroup(tag);
-                    lv0.addSubItem(new Level1Item(repository.name));
+                    lv0.addSubItem(repository);
                     tags.put(tag, lv0);
                     entities.add(lv0);
                 }
             }
 
             if (repository.like == 0 && TextUtils.isEmpty(repository.group)){
-                lv0NoGroup.addSubItem(new Level1Item(repository.name));
+                lv0NoGroup.addSubItem(repository);
             }
         }
         entities.add(lv0NoGroup);
@@ -350,7 +348,8 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
     private SwipeMenuCreator mSwipeMenuCreator = new SwipeMenuCreator() {
         @Override
         public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
-            int width = getResources().getDimensionPixelSize(R.dimen.dp_70);
+            if (viewType == ExpandableItemAdapter.TYPE_LEVEL_0) return;
+            int width = getResources().getDimensionPixelSize(R.dimen.dimen_80);
 
             // 1. MATCH_PARENT 自适应高度，保持和Item一样高;
             // 2. 指定具体的高，比如80;
@@ -375,7 +374,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
 
     private SwipeMenuViewBindListener mSwipeMenuViewBindListener = new SwipeMenuViewBindListener() {
         @Override public void onBindMenuView(int position, int menuPosition, View view) {
-            Repository repository = repoAdapter.getItem(position);
+            Repository repository = (Repository) expandableItemAdapter.getItem(position);
             SwipeMenuBridge menuBridge = (SwipeMenuBridge) view.getTag();
 
             ImageView imageView = menuBridge.getImageView();
