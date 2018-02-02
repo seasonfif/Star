@@ -29,7 +29,18 @@ public class DBEngine {
     return GreenDaoManager.getInstance().getDaoSession().loadAll(cls);
   }
 
-  public static <T> List<T> loadByLike(Class<T> cls, int key) {
-    return GreenDaoManager.getInstance().getDaoSession().queryBuilder(cls).where(RepositoryDao.Properties.Like.eq(key)).list();
+  /**
+   * 仓库名模糊搜索
+   * @param cls
+   * @param key
+   * @param <T>
+   * @return
+   */
+  public static <T> List<T> loadByName(Class<T> cls, String key) {
+    return GreenDaoManager.getInstance().getDaoSession().queryBuilder(cls).where(RepositoryDao.Properties.Name.like("%"+key+"%")).list();
+  }
+
+  public static <T> T loadById(Class<T> cls, long id) {
+    return GreenDaoManager.getInstance().getDaoSession().queryBuilder(cls).where(RepositoryDao.Properties.Id.eq(id)).unique();
   }
 }

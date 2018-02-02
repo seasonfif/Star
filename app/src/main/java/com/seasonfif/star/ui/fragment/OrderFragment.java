@@ -9,9 +9,9 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +32,8 @@ import com.seasonfif.star.ui.helper.DataObserver;
 import com.seasonfif.star.ui.helper.EventManager;
 import com.seasonfif.star.utils.Navigator;
 import com.seasonfif.star.utils.ThemeUtil;
-import com.seasonfif.star.widget.DefineLoadMoreView;
+import com.seasonfif.star.utils.ToastUtils;
+import com.seasonfif.star.utils.Utils;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
@@ -48,14 +49,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by lxy on 2018/1/27.
@@ -71,13 +66,13 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
     @BindView(R.id.content_container)
     SwipeRefreshLayout mContentContainer;
 
+    public static String KEY_TITLE = "title";
+    String title;
     private int pageIndex = 1;
     private SwipeMenuRecyclerView mRecyclerView;
     private RepoAdapter repoAdapter;
     private ExpandableItemAdapter expandableItemAdapter;
-    private boolean isExpandeAll = false;
-    public static String KEY_TITLE = "title";
-    String title;
+    private String query;
 
     public static OrderFragment newInstance(String title) {
         Bundle args = new Bundle();
@@ -111,6 +106,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         setHasOptionsMenu(true);
         mToolbar.inflateMenu(R.menu.order_menu);
         mToolbar.setOnMenuItemClickListener(this);
+        searchViewInit();
 
         View customerView = initCustomerView();
         if (customerView != null) {
@@ -122,6 +118,37 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
             @Override
             public void onClick(View v) {
                 scrollToTop();
+            }
+        });
+    }
+
+    private void searchViewInit() {
+        MenuItem menuItem = mToolbar.getMenu().getItem(0);
+        menuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                //ToastUtils.with(getContext()).show("SearchView open");
+                return true;
+            }
+
+            @Override public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                //ToastUtils.with(getContext()).show("SearchView close");
+                query = null;
+                loadData();
+                return true;
+            }
+        });
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        //searchView.setQueryHint("search condition");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override public boolean onQueryTextSubmit(String str) {
+                Utils.closeInputMethod(getActivity());
+                query = str;
+                loadData();
+                return true;
+            }
+
+            @Override public boolean onQueryTextChange(String newText) {
+                return false;
             }
         });
     }
@@ -158,6 +185,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         //mRecyclerView.setAdapter(repoAdapter);
         expandableItemAdapter = new ExpandableItemAdapter(null);
         mRecyclerView.setAdapter(expandableItemAdapter);
+        loadData();
         return mRecyclerView;
     }
 
@@ -197,12 +225,18 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         Collection<? extends MultiItemEntity> entities = generateData();
         expandableItemAdapter.replaceData(entities);
         mContentContainer.setRefreshing(false);
-        Toast.makeText(getContext(), "Total:" + entities.size(), Toast.LENGTH_SHORT).show();
         mRecyclerView.loadMoreFinish(entities == null || entities.size() == 0, false);
     }
 
     private Collection<? extends MultiItemEntity> generateData() {
-        List<Repository> rawList = DBEngine.loadAll(Repository.class);
+        List<Repository> rawList;
+        if (!TextUtils.isEmpty(query)){
+            rawList = DBEngine.loadByName(Repository.class, query);
+        }else{
+            rawList = DBEngine.loadAll(Repository.class);
+        }
+
+        ToastUtils.with(getContext()).show("Total:" + rawList.size());
         List<MultiItemEntity> entities = new ArrayList<>();
         Map<Integer, Level0Item> likes = new HashMap<>();
         Level0Item lv0like = new Level0Item("Favorite");
@@ -408,7 +442,6 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
     @Override public boolean onMenuItemClick(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_search) {
-            Toast.makeText(getActivity(), "search", Toast.LENGTH_SHORT).show();
             return true;
         }
         return false;
@@ -416,6 +449,13 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
 
     @Override protected void refresh() {
         loadData();
+    }
+
+    @Override public void setUserVisibleHint(boolean isVisibleToUser) {
+        if (!isVisibleToUser){
+            Utils.closeInputMethod(getActivity());
+        }
+        super.setUserVisibleHint(isVisibleToUser);
     }
 
     @Override public void onDestroyView() {

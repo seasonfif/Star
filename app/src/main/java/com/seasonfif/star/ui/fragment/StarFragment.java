@@ -200,7 +200,13 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
         for (Repository repo : repos) {
             repo.login = repo.owner.login;
             repo.avatar = repo.owner.avatar_url;
-            DBEngine.insertOrReplace(repo);
+            Repository repository = DBEngine.loadById(Repository.class, repo.id);
+            if (repository == null){
+                DBEngine.insertOrReplace(repo);
+            }else{
+                repo.like = repository.like;
+                repo.group = repository.group;
+            }
         }
         EventManager.getInstanse().notifyAll(DataObserver.MULTI, null);
     }

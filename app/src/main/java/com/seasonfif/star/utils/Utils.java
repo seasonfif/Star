@@ -2,6 +2,7 @@ package com.seasonfif.star.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.DisplayMetrics;
@@ -54,12 +55,23 @@ public class Utils {
    * 关闭输入法
    * @param context
    */
-  public static void closeInputMethod(Context context) {
-    InputMethodManager inputMethodManager = (InputMethodManager) context
-        .getSystemService(Context.INPUT_METHOD_SERVICE);
-    inputMethodManager.hideSoftInputFromWindow(((Activity) context)
-            .getCurrentFocus().getWindowToken(),
-        InputMethodManager.HIDE_NOT_ALWAYS);
+  public static void closeInputMethod(Activity context) {
+    if (context != null && isSoftShowing(context)) {
+      InputMethodManager inputMethodManager = (InputMethodManager) context
+          .getSystemService(Context.INPUT_METHOD_SERVICE);
+      inputMethodManager.hideSoftInputFromWindow(((Activity) context)
+              .getCurrentFocus().getWindowToken(),
+          InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+  }
+
+  private static boolean isSoftShowing(Activity context) {
+    //获取当前屏幕内容的高度
+    int screenHeight = context.getWindow().getDecorView().getHeight();
+    //获取View可见区域的bottom
+    Rect rect = new Rect();
+    context.getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+    return screenHeight - rect.bottom != 0;
   }
 
   public static String b2gb(int size) {
