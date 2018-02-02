@@ -30,6 +30,7 @@ import com.seasonfif.star.net.StarService;
 import com.seasonfif.star.ui.adapter.RepoAdapter;
 import com.seasonfif.star.ui.helper.DataObserver;
 import com.seasonfif.star.ui.helper.EventManager;
+import com.seasonfif.star.utils.DataUtil;
 import com.seasonfif.star.utils.Navigator;
 import com.seasonfif.star.utils.ThemeUtil;
 import com.seasonfif.star.widget.DefineLoadMoreView;
@@ -43,7 +44,6 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuViewBindListener;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import retrofit2.Response;
 import rx.Subscriber;
@@ -357,7 +357,7 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
         }
     };
 
-    private String[] tags = new String[]{"无","控件","框架","工具","android","java","机器学习","控件","框架","工具","android","java","机器学习"};
+    private List<String> tags = DataUtil.getTagsData();
 
     private void chooseTag(final Repository repository){
 
@@ -374,13 +374,13 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
         builder.setTitle("请选择");
         //设置图标
         builder.setIcon(R.drawable.ic_tag);
-        builder.setSingleChoiceItems(tags, index, new DialogInterface.OnClickListener() {
+        builder.setSingleChoiceItems(tags.toArray(new String[]{}), index, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (i == 0){
                     repository.group = "";
                 }else{
-                    repository.group = tags[i];
+                    repository.group = tags.get(i);
                 }
             }
         });
@@ -398,8 +398,7 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
     }
 
     private int getIndexByTag(String tag) {
-        List<String> list = Arrays.asList(tags);
-        int index = list.indexOf(tag);
+        int index = tags.indexOf(tag);
         if (index == -1)  index = 0;
         return index;
     }

@@ -1830,6 +1830,13 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
         return collapse(position, animate, true);
     }
 
+    public void collapseAll() {
+
+        for (int i = mData.size() - 1 + getHeaderLayoutCount(); i >= getHeaderLayoutCount(); i--) {
+            collapse(i, false, false);
+        }
+    }
+
     private int getItemPosition(T item) {
         return item != null && mData != null && !mData.isEmpty() ? mData.indexOf(item) : -1;
     }

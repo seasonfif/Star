@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -74,6 +75,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
     private SwipeMenuRecyclerView mRecyclerView;
     private RepoAdapter repoAdapter;
     private ExpandableItemAdapter expandableItemAdapter;
+    private boolean isExpandeAll = false;
     public static String KEY_TITLE = "title";
     String title;
 
@@ -112,6 +114,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
 
         View customerView = initCustomerView();
         if (customerView != null) {
+            mContentContainer.setEnabled(false);
             mContentContainer.addView(customerView);
         }
 
@@ -145,11 +148,11 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         mRecyclerView.setOnItemMoveListener(mOnItemMoveListener);
         mRecyclerView.setOnItemStateChangedListener(mOnItemStateChangedListener);
 
-        // 自定义的核心就是DefineLoadMoreView类。
+        /*// 自定义的核心就是DefineLoadMoreView类。
         DefineLoadMoreView loadMoreView = new DefineLoadMoreView(getContext());
         mRecyclerView.addFooterView(loadMoreView); // 添加为Footer。
         mRecyclerView.setLoadMoreView(loadMoreView); // 设置LoadMoreView更新监听。
-        mRecyclerView.setLoadMoreListener(mLoadMoreListener); // 加载更多的监听。
+        mRecyclerView.setLoadMoreListener(mLoadMoreListener); // 加载更多的监听。*/
 
         //repoAdapter = new RepoAdapter(getContext());
         //mRecyclerView.setAdapter(repoAdapter);
@@ -202,24 +205,35 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         List<Repository> rawList = DBEngine.loadAll(Repository.class);
         List<MultiItemEntity> entities = new ArrayList<>();
         Map<Integer, Level0Item> likes = new HashMap<>();
+        Level0Item lv0like = new Level0Item("Favorite");
+        Level0Item lv0NoGroup = new Level0Item("未添加任何标签");
+        entities.add(lv0like);
+        Map<String, Level0Item> tags = new HashMap<>();
         for (int i = 0; i < rawList.size(); i++) {
             Repository repository = rawList.get(i);
-            Integer key = new Integer(repository.like);
-            if (likes.containsKey(key)){
-                Level0Item lv0 = likes.get(key);
-                lv0.addSubItem(new Level1Item(repository.name));
-            }else{
-                Level0Item lv0 = new Level0Item();
-                if (key == 0){
-                    lv0.setGroup("未加标签");
+            if (repository.like == 1){
+                lv0like.addSubItem(new Level1Item(repository.name));
+            }
+
+            if (!TextUtils.isEmpty(repository.group)){
+                String tag = repository.group;
+                if (tags.containsKey(tag)){
+                    Level0Item lv0 = tags.get(tag);
+                    lv0.addSubItem(new Level1Item(repository.name));
                 }else{
-                    lv0.setGroup("已加标签");
+                    Level0Item lv0 = new Level0Item();
+                    lv0.setGroup(tag);
+                    lv0.addSubItem(new Level1Item(repository.name));
+                    tags.put(tag, lv0);
+                    entities.add(lv0);
                 }
-                lv0.addSubItem(new Level1Item(repository.name));
-                likes.put(key, lv0);
-                entities.add(lv0);
+            }
+
+            if (repository.like == 0 && TextUtils.isEmpty(repository.group)){
+                lv0NoGroup.addSubItem(new Level1Item(repository.name));
             }
         }
+        entities.add(lv0NoGroup);
         return entities;
     }
 
@@ -393,8 +407,8 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
 
     @Override public boolean onMenuItemClick(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_more) {
-            Toast.makeText(getActivity(), "more", Toast.LENGTH_SHORT).show();
+        if (id == R.id.action_search) {
+            Toast.makeText(getActivity(), "search", Toast.LENGTH_SHORT).show();
             return true;
         }
         return false;
