@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
@@ -59,9 +60,11 @@ public class Utils {
     if (context != null && isSoftShowing(context)) {
       InputMethodManager inputMethodManager = (InputMethodManager) context
           .getSystemService(Context.INPUT_METHOD_SERVICE);
-      inputMethodManager.hideSoftInputFromWindow(((Activity) context)
-              .getCurrentFocus().getWindowToken(),
-          InputMethodManager.HIDE_NOT_ALWAYS);
+      View view = context.getCurrentFocus();
+      if (view != null){
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(),
+            InputMethodManager.HIDE_NOT_ALWAYS);
+      }
     }
   }
 

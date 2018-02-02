@@ -46,23 +46,29 @@ public class ExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEn
       switch(holder.getItemViewType()){
         case TYPE_LEVEL_0:
           final Level0Item lv0 = (Level0Item) item;
-          holder.setText(R.id.tv_title, lv0.group)
-              .setTextColor(R.id.tv_title, Color.WHITE)
-              //.setImageDrawable(R.id.iv, ThemeUtil.tintDrawable(R.drawable.arrow_r, Color.WHITE))
-              .setImageDrawable(R.id.iv, lv0.isExpanded() ? ThemeUtil.tintDrawable(R.drawable.arrow_b, Color.WHITE) :
-                  ThemeUtil.tintDrawable(R.drawable.arrow_r, Color.WHITE));
+          final int subcount = lv0.getSubItems() == null ? 0 : lv0.getSubItems().size();
+          holder.setText(R.id.tv_title, lv0.group + " : " + subcount)
+              .setTextColor(R.id.tv_title, Color.WHITE);
+          if (subcount > 0){
+            holder.setImageDrawable(R.id.iv, lv0.isExpanded() ? ThemeUtil.tintDrawable(R.drawable.arrow_b, Color.WHITE) :
+                ThemeUtil.tintDrawable(R.drawable.arrow_r, Color.WHITE));
+          }else{
+            holder.setImageDrawable(R.id.iv, null);
+          }
           holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {
               int pos = holder.getAdapterPosition();
               Log.d(TAG, "Level 0 item pos: " + pos);
               ImageView iv = holder.getView(R.id.iv);
-              if (lv0.isExpanded()) {
-                //不能做动画 因为holder返回的iv不是同一个对象  holder改变了？？？
-                //rotate(iv, -270, 0);
-                collapse(pos);
-              } else {
-                //rotate(iv, 0, 90);
-                expand(pos);
+              if (subcount > 0){
+                if (lv0.isExpanded()) {
+                  //不能做动画 因为holder返回的iv不是同一个对象  holder改变了？？？
+                  //rotate(iv, -270, 0);
+                  collapse(pos);
+                } else {
+                  //rotate(iv, 0, 90);
+                  expand(pos);
+                }
               }
             }
           });
