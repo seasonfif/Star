@@ -39,7 +39,7 @@ public class Repository implements Serializable{
     /**
      *  分组信息
      */
-    public String group;
+    public String group = "";
 
     @Generated(hash = 679192990)
     public Repository(long id, String name, String login, String avatar,

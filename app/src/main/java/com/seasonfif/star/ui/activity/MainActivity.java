@@ -16,13 +16,14 @@ import com.seasonfif.star.R;
 import com.seasonfif.star.ui.fragment.OrderFragment;
 import com.seasonfif.star.ui.fragment.SettingFragment;
 import com.seasonfif.star.ui.fragment.StarFragment;
+import com.seasonfif.star.widget.ExViewPager;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity {
 
     @BindView(R.id.pager)
-    ViewPager pager;
+    ExViewPager pager;
     @BindView(R.id.navigation)
     BottomNavigationView navigation;
 
@@ -91,6 +92,8 @@ public class MainActivity extends BaseActivity {
         pagerAdapter.addFragment(StarFragment.newInstance("Star"));
         pagerAdapter.addFragment(OrderFragment.newInstance("Order"));
         pagerAdapter.addFragment(SettingFragment.newInstance());
+
+        pager.setScanScroll(false);
         //预加载其余两个fragment，同时会缓存这三个fragment
         pager.setOffscreenPageLimit(2);
         pager.setAdapter(pagerAdapter);

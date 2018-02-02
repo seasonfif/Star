@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,9 +19,13 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.seasonfif.star.R;
 import com.seasonfif.star.database.DBEngine;
+import com.seasonfif.star.model.Level0Item;
+import com.seasonfif.star.model.Level1Item;
 import com.seasonfif.star.model.Repository;
+import com.seasonfif.star.ui.adapter.ExpandableItemAdapter;
 import com.seasonfif.star.ui.adapter.RepoAdapter;
 import com.seasonfif.star.ui.helper.DataObserver;
 import com.seasonfif.star.ui.helper.EventManager;
@@ -38,8 +43,14 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuViewBindListener;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemStateChangedListener;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -62,6 +73,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
     private int pageIndex = 1;
     private SwipeMenuRecyclerView mRecyclerView;
     private RepoAdapter repoAdapter;
+    private ExpandableItemAdapter expandableItemAdapter;
     public static String KEY_TITLE = "title";
     String title;
 
@@ -126,10 +138,10 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         //打开长按拖拽的开关
         mRecyclerView.setLongPressDragEnabled(true);
 
-        mRecyclerView.setSwipeItemClickListener(mItemClickListener);
+        //mRecyclerView.setSwipeItemClickListener(mItemClickListener);
         mRecyclerView.setSwipeMenuCreator(mSwipeMenuCreator);
-        mRecyclerView.setSwipeMenuViewBindListener(mSwipeMenuViewBindListener);
-        mRecyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
+        //mRecyclerView.setSwipeMenuViewBindListener(mSwipeMenuViewBindListener);
+        //mRecyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
         mRecyclerView.setOnItemMoveListener(mOnItemMoveListener);
         mRecyclerView.setOnItemStateChangedListener(mOnItemStateChangedListener);
 
@@ -139,13 +151,15 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         mRecyclerView.setLoadMoreView(loadMoreView); // 设置LoadMoreView更新监听。
         mRecyclerView.setLoadMoreListener(mLoadMoreListener); // 加载更多的监听。
 
-        repoAdapter = new RepoAdapter(getContext());
-        mRecyclerView.setAdapter(repoAdapter);
+        //repoAdapter = new RepoAdapter(getContext());
+        //mRecyclerView.setAdapter(repoAdapter);
+        expandableItemAdapter = new ExpandableItemAdapter(null);
+        mRecyclerView.setAdapter(expandableItemAdapter);
         return mRecyclerView;
     }
 
     private void loadData() {
-        Observable.create(new Observable.OnSubscribe<List<Repository>>(){
+        /*Observable.create(new Observable.OnSubscribe<List<Repository>>(){
             @Override public void call(Subscriber<? super List<Repository>> subscriber) {
                 try {
                     //List<Repository> list = DBEngine.loadAll(Repository.class);
@@ -176,7 +190,37 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
                 Toast.makeText(getContext(), "Total:" + repositories.size(), Toast.LENGTH_SHORT).show();
                 mRecyclerView.loadMoreFinish(repositories == null || repositories.size() == 0, false);
             }
-        });
+        });*/
+        Collection<? extends MultiItemEntity> entities = generateData();
+        expandableItemAdapter.replaceData(entities);
+        mContentContainer.setRefreshing(false);
+        Toast.makeText(getContext(), "Total:" + entities.size(), Toast.LENGTH_SHORT).show();
+        mRecyclerView.loadMoreFinish(entities == null || entities.size() == 0, false);
+    }
+
+    private Collection<? extends MultiItemEntity> generateData() {
+        List<Repository> rawList = DBEngine.loadAll(Repository.class);
+        List<MultiItemEntity> entities = new ArrayList<>();
+        Map<Integer, Level0Item> likes = new HashMap<>();
+        for (int i = 0; i < rawList.size(); i++) {
+            Repository repository = rawList.get(i);
+            Integer key = new Integer(repository.like);
+            if (likes.containsKey(key)){
+                Level0Item lv0 = likes.get(key);
+                lv0.addSubItem(new Level1Item(repository.name));
+            }else{
+                Level0Item lv0 = new Level0Item();
+                if (key == 0){
+                    lv0.setGroup("未加标签");
+                }else{
+                    lv0.setGroup("已加标签");
+                }
+                lv0.addSubItem(new Level1Item(repository.name));
+                likes.put(key, lv0);
+                entities.add(lv0);
+            }
+        }
+        return entities;
     }
 
     /**
@@ -307,8 +351,8 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
             int fromPosition = srcHolder.getAdapterPosition() - mRecyclerView.getHeaderItemCount();
             int toPosition = targetHolder.getAdapterPosition() - mRecyclerView.getHeaderItemCount();
 
-            Collections.swap(repoAdapter.mDataList, fromPosition, toPosition);
-            repoAdapter.notifyItemMoved(fromPosition, toPosition);
+            Collections.swap(expandableItemAdapter.getData(), fromPosition, toPosition);
+            expandableItemAdapter.notifyItemMoved(fromPosition, toPosition);
             return true;
         }
 

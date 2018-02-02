@@ -1,5 +1,6 @@
 package com.seasonfif.star.ui.fragment;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,8 +8,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +43,7 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuViewBindListener;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import retrofit2.Response;
 import rx.Subscriber;
@@ -256,6 +260,11 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
     };
 
     /**
+     * 当前点击的item
+     * item单独更新使用
+     */
+    private int itemPosition;
+    /**
      * RecyclerView的Item中的Menu点击监听。
      */
     private SwipeMenuItemClickListener mMenuItemClickListener = new SwipeMenuItemClickListener() {
@@ -267,6 +276,7 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
             int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
             int menuPosition = menuBridge.getPosition(); // 菜单在RecyclerView的Item中的Position。
 
+            itemPosition = adapterPosition;
             Repository repository = repoAdapter.getItem(adapterPosition);
             //左边like按钮点击事件
             if (direction == SwipeMenuRecyclerView.LEFT_DIRECTION){
@@ -281,11 +291,16 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
                 EventManager.getInstanse().notifyAll(DataObserver.SINGLE, repository);
             }
 
-            /*if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
-                Toast.makeText(getContext(), "list第" + adapterPosition + "; 右侧菜单第" + menuPosition, Toast.LENGTH_SHORT).show();
-            } else if (direction == SwipeMenuRecyclerView.LEFT_DIRECTION) {
-                Toast.makeText(getContext(), "list第" + adapterPosition + "; 左侧菜单第" + menuPosition, Toast.LENGTH_SHORT).show();
-            }*/
+            //右边like按钮点击事件
+            if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION){
+                /*if (TextUtils.isEmpty(repository.group)){
+                    menuBridge.getImageView().setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_tag, Color.RED));
+                }else{
+                    menuBridge.getImageView().setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_tag, Color.WHITE));
+                }*/
+                menuBridge.closeMenu();
+                chooseTag(repository);
+            }
         }
     };
 
@@ -295,7 +310,7 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
     private SwipeMenuCreator mSwipeMenuCreator = new SwipeMenuCreator() {
         @Override
         public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
-            int width = getResources().getDimensionPixelSize(R.dimen.dp_70);
+            int width = getResources().getDimensionPixelSize(R.dimen.dimen_80);
 
             // 1. MATCH_PARENT 自适应高度，保持和Item一样高;
             // 2. 指定具体的高，比如80;
@@ -311,7 +326,7 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
 
             SwipeMenuItem closeItem = new SwipeMenuItem(getContext())
                 .setBackgroundColorResource(ThemeUtil.getResIdByAttr(getActivity(), R.attr.app_accent_color))
-                .setImage(R.drawable.ic_launcher)
+                .setImage(R.drawable.ic_tag)
                 .setWidth(width)
                 .setHeight(height);
             swipeRightMenu.addMenuItem(closeItem); // 添加菜单到右侧。
@@ -331,8 +346,63 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
                     imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.WHITE));
                 }
             }
+
+            if (menuBridge.getDirection() == SwipeMenuRecyclerView.RIGHT_DIRECTION){
+                if (TextUtils.isEmpty(repository.group)){
+                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_tag, Color.WHITE));
+                }else{
+                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_tag, Color.RED));
+                }
+            }
         }
     };
+
+    private String[] tags = new String[]{"无","控件","框架","工具","android","java","机器学习","控件","框架","工具","android","java","机器学习"};
+
+    private void chooseTag(final Repository repository){
+
+        final String oldTag = repository.group;
+        int index;
+        if (TextUtils.isEmpty(repository.group)){
+            index = 0;
+        }else{
+            index = getIndexByTag(repository.group);
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        //设置标题
+        builder.setTitle("请选择");
+        //设置图标
+        builder.setIcon(R.drawable.ic_tag);
+        builder.setSingleChoiceItems(tags, index, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (i == 0){
+                    repository.group = "";
+                }else{
+                    repository.group = tags[i];
+                }
+            }
+        });
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override public void onDismiss(DialogInterface dialogInterface) {
+                if (!repository.group.equals(oldTag)){
+                    repoAdapter.notifyItemChanged(itemPosition);
+                    DBEngine.insertOrReplace(repository);
+                    EventManager.getInstanse().notifyAll(DataObserver.SINGLE, repository);
+                }
+            }
+        });
+        builder.create();
+        builder.show();
+    }
+
+    private int getIndexByTag(String tag) {
+        List<String> list = Arrays.asList(tags);
+        int index = list.indexOf(tag);
+        if (index == -1)  index = 0;
+        return index;
+    }
 
     private Integer getLinkData(Response r) {
         if (r != null) {

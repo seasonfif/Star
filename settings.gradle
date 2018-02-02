@@ -1,1 +1,1 @@
-include ':app', ':recyclerview-swipe'
+include ':app', ':recyclerview-swipe', ':library-adapter'
