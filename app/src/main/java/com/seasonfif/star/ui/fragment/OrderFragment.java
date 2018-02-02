@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import com.chad.library.adapter.base.animation.ScaleInAnimation;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.seasonfif.star.R;
 import com.seasonfif.star.database.DBEngine;
@@ -108,7 +110,6 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
 
         View customerView = initCustomerView();
         if (customerView != null) {
-            mContentContainer.setEnabled(false);
             mContentContainer.addView(customerView);
         }
 
@@ -157,6 +158,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
     }
 
     private View initCustomerView() {
+        mContentContainer.setEnabled(true);
         mContentContainer.setOnRefreshListener(mRefreshListener);
 
         mRecyclerView = new SwipeMenuRecyclerView(getContext());
@@ -249,6 +251,15 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
 
             if (!TextUtils.isEmpty(repository.group)){
                 String tag = repository.group;
+                //如果已经被添加进favorite列表，为了防止重复添加（重复添加在展开收起时只会定位到列表中的第一个对象，引发bug）
+                //故这里需要重new对象
+                if (repository.like == 1){
+                    Repository temp = repository;
+                    repository = new Repository();
+                    repository.like = temp.like;
+                    repository.group = temp.group;
+                    repository.name = temp.name;
+                }
                 if (tags.containsKey(tag)){
                     Level0Item lv0 = tags.get(tag);
                     lv0.addSubItem(repository);
