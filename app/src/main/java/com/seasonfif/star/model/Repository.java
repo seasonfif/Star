@@ -2,6 +2,7 @@ package com.seasonfif.star.model;
 
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.seasonfif.star.ui.adapter.ExpandableItemAdapter;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
@@ -13,7 +14,7 @@ import java.io.Serializable;
  * Created by lxy on 2018/1/27.
  */
 @Entity
-public class Repository implements Serializable, MultiItemEntity {
+public class Repository implements Cloneable, Serializable, MultiItemEntity {
 
     @Transient
     private static final long serialVersionUID = -7554628269759806030L;
@@ -173,6 +174,17 @@ public class Repository implements Serializable, MultiItemEntity {
 
     @Override public int getItemType() {
         return ExpandableItemAdapter.TYPE_LEVEL_1;
+    }
+
+    @Override
+    public Repository clone() {
+        Repository repository = null;
+        try {
+            repository = (Repository) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return repository;
     }
 
     public static class User {

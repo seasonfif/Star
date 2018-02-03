@@ -18,8 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 import com.seasonfif.star.R;
 import com.seasonfif.star.database.DBEngine;
 import com.seasonfif.star.model.Repository;
@@ -43,8 +42,12 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuViewBindListener;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Response;
 import rx.Subscriber;
 import rx.Subscription;
@@ -457,7 +460,7 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
         getData(true);
     }
 
-    @Override protected void refresh() {
+    @Override protected void onHideAvatar() {
         getData(true);
     }
 }

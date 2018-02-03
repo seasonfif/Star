@@ -17,10 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
-import com.chad.library.adapter.base.animation.ScaleInAnimation;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.seasonfif.star.R;
 import com.seasonfif.star.database.DBEngine;
@@ -45,12 +42,16 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuViewBindListener;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemStateChangedListener;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by lxy on 2018/1/27.
@@ -70,6 +71,8 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
     String title;
     private int pageIndex = 1;
     private SwipeMenuRecyclerView mRecyclerView;
+    private MenuItem menuItem;
+    private SearchView searchView;
     private RepoAdapter repoAdapter;
     private ExpandableItemAdapter expandableItemAdapter;
     private String query;
@@ -122,7 +125,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
     }
 
     private void searchViewInit() {
-        MenuItem menuItem = mToolbar.getMenu().getItem(0);
+        menuItem = mToolbar.getMenu().getItem(0);
         menuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override public boolean onMenuItemActionExpand(MenuItem menuItem) {
                 //ToastUtils.with(getContext()).show("SearchView open");
@@ -136,7 +139,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
                 return true;
             }
         });
-        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView = (SearchView) menuItem.getActionView();
         //searchView.setQueryHint("search condition");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override public boolean onQueryTextSubmit(String str) {
@@ -168,7 +171,8 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         //打开长按拖拽的开关
         mRecyclerView.setLongPressDragEnabled(true);
 
-        //mRecyclerView.setSwipeItemClickListener(mItemClickListener);
+//        这个点击事件会影响expandableItemAdapter的事件
+//        mRecyclerView.setSwipeItemClickListener(mItemClickListener);
         mRecyclerView.setSwipeMenuCreator(mSwipeMenuCreator);
         mRecyclerView.setSwipeMenuViewBindListener(mSwipeMenuViewBindListener);
         //mRecyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
@@ -183,13 +187,16 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
 
         //repoAdapter = new RepoAdapter(getContext());
         //mRecyclerView.setAdapter(repoAdapter);
-        expandableItemAdapter = new ExpandableItemAdapter(null);
+        expandableItemAdapter = new ExpandableItemAdapter(getContext(), null);
         mRecyclerView.setAdapter(expandableItemAdapter);
         loadData();
         return mRecyclerView;
     }
 
     private void loadData() {
+        if(expandableItemAdapter == null){
+            return;
+        }
         /*Observable.create(new Observable.OnSubscribe<List<Repository>>(){
             @Override public void call(Subscriber<? super List<Repository>> subscriber) {
                 try {
@@ -252,13 +259,9 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
             if (!TextUtils.isEmpty(repository.group)){
                 String tag = repository.group;
                 //如果已经被添加进favorite列表，为了防止重复添加（重复添加在展开收起时只会定位到列表中的第一个对象，引发bug）
-                //故这里需要重new对象
+                //故这里需要新对象
                 if (repository.like == 1){
-                    Repository temp = repository;
-                    repository = new Repository();
-                    repository.like = temp.like;
-                    repository.group = temp.group;
-                    repository.name = temp.name;
+                    repository = repository.clone();
                 }
                 if (tags.containsKey(tag)){
                     Level0Item lv0 = tags.get(tag);
@@ -316,7 +319,9 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
     private SwipeItemClickListener mItemClickListener = new SwipeItemClickListener() {
         @Override
         public void onItemClick(View itemView, int position) {
-            Navigator.openRepoProfile(getActivity(), repoAdapter.getItem(position));
+            if(expandableItemAdapter.getItemViewType(position) == ExpandableItemAdapter.TYPE_LEVEL_1){
+                Navigator.openRepoProfile(getActivity(), repoAdapter.getItem(position));
+            }
         }
     };
 
@@ -457,8 +462,15 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         return false;
     }
 
-    @Override protected void refresh() {
+    @Override protected void onHideAvatar() {
         loadData();
+    }
+
+    @Override
+    protected void onThemeChange() {
+        if (menuItem.isActionViewExpanded()){
+            menuItem.collapseActionView();
+        }
     }
 
     @Override public void setUserVisibleHint(boolean isVisibleToUser) {

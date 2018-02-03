@@ -2,11 +2,13 @@ package com.seasonfif.star.ui.fragment;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +17,9 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
+
 import com.seasonfif.star.R;
+import com.seasonfif.star.constant.Constants;
 import com.seasonfif.star.utils.SettingShared;
 import com.seasonfif.star.utils.ThemeUtil;
 import com.seasonfif.star.utils.Utils;
@@ -90,6 +94,7 @@ public class ThemeSwitchDialogFragment extends DialogFragment {
 
     grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Constants.THEME_CHANGE));
         getDialog().dismiss();
         String theme = getThemeById(i);
         ThemeUtil.changeTheme(getActivity(), theme);

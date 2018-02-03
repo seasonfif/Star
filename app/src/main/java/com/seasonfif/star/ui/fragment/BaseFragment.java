@@ -25,7 +25,9 @@ public class BaseFragment extends Fragment {
         @Override public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (Constants.HIDE_AVATAR.equals(action)){
-              refresh();
+              onHideAvatar();
+            }else if (Constants.THEME_CHANGE.equals(action)){
+                onThemeChange();
             }
         }
     };
@@ -34,6 +36,7 @@ public class BaseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         intentFilter = new IntentFilter();
         intentFilter.addAction(Constants.HIDE_AVATAR);
+        intentFilter.addAction(Constants.THEME_CHANGE);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(receiver, intentFilter);
     }
 
@@ -47,7 +50,10 @@ public class BaseFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-    protected void refresh() {
+    protected void onHideAvatar() {
+    }
+
+    protected void onThemeChange() {
     }
 
 
