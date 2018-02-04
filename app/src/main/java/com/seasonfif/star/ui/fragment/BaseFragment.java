@@ -146,7 +146,7 @@ public abstract class BaseFragment extends Fragment {
                 if (TextUtils.isEmpty(repository.group)){
                     imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_untag, Color.RED));
                 }else{
-                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_tag, Color.RED));
+                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.svg_tag, Color.RED));
                 }
             }
         }
@@ -201,7 +201,7 @@ public abstract class BaseFragment extends Fragment {
         //设置标题
         builder.setTitle("请选择");
         //设置图标
-        builder.setIcon(ThemeUtil.tintDrawable(R.drawable.ic_tag, Color.RED));
+        builder.setIcon(ThemeUtil.tintDrawable(R.drawable.svg_tag, Color.RED));
         builder.setSingleChoiceItems(tags.toArray(new String[]{}), index, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
