@@ -1,6 +1,5 @@
 package com.seasonfif.star.ui.fragment;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -16,7 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.seasonfif.star.R;
@@ -24,34 +23,29 @@ import com.seasonfif.star.database.DBEngine;
 import com.seasonfif.star.model.Level0Item;
 import com.seasonfif.star.model.Repository;
 import com.seasonfif.star.ui.adapter.ExpandableItemAdapter;
-import com.seasonfif.star.ui.adapter.RepoAdapter;
 import com.seasonfif.star.ui.helper.DataObserver;
 import com.seasonfif.star.ui.helper.EventManager;
-import com.seasonfif.star.utils.Navigator;
 import com.seasonfif.star.utils.ThemeUtil;
 import com.seasonfif.star.utils.ToastUtils;
 import com.seasonfif.star.utils.Utils;
-import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuViewBindListener;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemStateChangedListener;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by lxy on 2018/1/27.
@@ -73,7 +67,6 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
     private SwipeMenuRecyclerView mRecyclerView;
     private MenuItem menuItem;
     private SearchView searchView;
-    private RepoAdapter repoAdapter;
     private ExpandableItemAdapter expandableItemAdapter;
     private String query;
 
@@ -175,7 +168,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
 //        mRecyclerView.setSwipeItemClickListener(mItemClickListener);
         mRecyclerView.setSwipeMenuCreator(mSwipeMenuCreator);
         mRecyclerView.setSwipeMenuViewBindListener(mSwipeMenuViewBindListener);
-        //mRecyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
+        mRecyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
         mRecyclerView.setOnItemMoveListener(mOnItemMoveListener);
         mRecyclerView.setOnItemStateChangedListener(mOnItemStateChangedListener);
 
@@ -197,11 +190,10 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         if(expandableItemAdapter == null){
             return;
         }
-        /*Observable.create(new Observable.OnSubscribe<List<Repository>>(){
-            @Override public void call(Subscriber<? super List<Repository>> subscriber) {
+        Observable.create(new Observable.OnSubscribe<List<MultiItemEntity>>(){
+            @Override public void call(Subscriber<? super List<MultiItemEntity>> subscriber) {
                 try {
-                    //List<Repository> list = DBEngine.loadAll(Repository.class);
-                    List<Repository> list = DBEngine.loadByLike(Repository.class, 1);
+                    List<MultiItemEntity> list = generateData();
                     subscriber.onNext(list);
                     subscriber.onCompleted();
                 }catch (Exception e){
@@ -212,7 +204,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         })
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
-            .subscribe(new Subscriber<List<Repository>>() {
+            .subscribe(new Subscriber<List<MultiItemEntity>>() {
             @Override public void onCompleted() {
 
             }
@@ -222,30 +214,35 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
                 Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
-            @Override public void onNext(List<Repository> repositories) {
-                repoAdapter.notifyDataSetChanged(repositories);
+            @Override public void onNext(List<MultiItemEntity> entities) {
+                expandableItemAdapter.replaceData(entities);
                 mContentContainer.setRefreshing(false);
-                Toast.makeText(getContext(), "Total:" + repositories.size(), Toast.LENGTH_SHORT).show();
-                mRecyclerView.loadMoreFinish(repositories == null || repositories.size() == 0, false);
+                mRecyclerView.loadMoreFinish(entities == null || entities.size() == 0, false);
             }
-        });*/
-        Collection<? extends MultiItemEntity> entities = generateData();
-        expandableItemAdapter.replaceData(entities);
-        mContentContainer.setRefreshing(false);
-        mRecyclerView.loadMoreFinish(entities == null || entities.size() == 0, false);
+        });
     }
 
-    private Collection<? extends MultiItemEntity> generateData() {
-        List<Repository> rawList;
+    private List<MultiItemEntity> generateData() {
+        final List<Repository> rawList;
         if (!TextUtils.isEmpty(query)){
             rawList = DBEngine.loadByName(Repository.class, query);
         }else{
             rawList = DBEngine.loadAll(Repository.class);
         }
 
-        ToastUtils.with(getContext()).show("Total:" + rawList.size());
+        Collections.sort(rawList, new Comparator<Repository>() {
+            @Override
+            public int compare(Repository repository, Repository t1) {
+                return repository.name.compareToIgnoreCase(t1.name);
+            }
+        });
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ToastUtils.with(getContext()).show("Total:" + rawList.size());
+            }
+        });
         List<MultiItemEntity> entities = new ArrayList<>();
-        Map<Integer, Level0Item> likes = new HashMap<>();
         Level0Item lv0like = new Level0Item("Favorite");
         Level0Item lv0NoGroup = new Level0Item("未添加任何标签");
         entities.add(lv0like);
@@ -310,97 +307,6 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
 
                 }
             });
-        }
-    };
-
-    /**
-     * RecyclerView的Item点击监听。
-     */
-    private SwipeItemClickListener mItemClickListener = new SwipeItemClickListener() {
-        @Override
-        public void onItemClick(View itemView, int position) {
-            if(expandableItemAdapter.getItemViewType(position) == ExpandableItemAdapter.TYPE_LEVEL_1){
-                Navigator.openRepoProfile(getActivity(), repoAdapter.getItem(position));
-            }
-        }
-    };
-
-    /**
-     * RecyclerView的Item中的Menu点击监听。
-     */
-    private SwipeMenuItemClickListener mMenuItemClickListener = new SwipeMenuItemClickListener() {
-        @Override
-        public void onItemClick(SwipeMenuBridge menuBridge) {
-            //menuBridge.closeMenu();
-
-            int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
-            int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
-            int menuPosition = menuBridge.getPosition(); // 菜单在RecyclerView的Item中的Position。
-
-            Repository repository = repoAdapter.getItem(adapterPosition);
-            //左边like按钮点击事件
-            if (direction == SwipeMenuRecyclerView.LEFT_DIRECTION){
-                if (repository.like == 0){
-                    repository.like = 1;
-                    menuBridge.getImageView().setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.RED));
-                }else{
-                    repository.like = 0;
-                    menuBridge.getImageView().setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_unlike, Color.RED));
-                }
-                DBEngine.insertOrReplace(repository);
-            }
-
-            //if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
-            //    Toast.makeText(getContext(), "list第" + adapterPosition + "; 右侧菜单第" + menuPosition, Toast.LENGTH_SHORT).show();
-            //} else if (direction == SwipeMenuRecyclerView.LEFT_DIRECTION) {
-            //    Toast.makeText(getContext(), "list第" + adapterPosition + "; 左侧菜单第" + menuPosition, Toast.LENGTH_SHORT).show();
-            //}
-        }
-    };
-
-    /**
-     * 菜单创建器，在Item要创建菜单的时候调用。
-     */
-    private SwipeMenuCreator mSwipeMenuCreator = new SwipeMenuCreator() {
-        @Override
-        public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
-            if (viewType == ExpandableItemAdapter.TYPE_LEVEL_0) return;
-            int width = getResources().getDimensionPixelSize(R.dimen.dimen_80);
-
-            // 1. MATCH_PARENT 自适应高度，保持和Item一样高;
-            // 2. 指定具体的高，比如80;
-            // 3. WRAP_CONTENT，自身高度，不推荐;
-            int height = ViewGroup.LayoutParams.MATCH_PARENT;
-
-            SwipeMenuItem addItem = new SwipeMenuItem(getContext())
-                    .setBackgroundColorResource(R.color.menu_bg)
-                    .setImage(R.drawable.ic_unlike)
-                    .setWidth(width)
-                    .setHeight(height);
-            swipeLeftMenu.addMenuItem(addItem); // 添加菜单到左侧。
-
-            SwipeMenuItem closeItem = new SwipeMenuItem(getContext())
-                    .setBackgroundColorResource(R.color.menu_bg)
-                    .setImage(R.drawable.ic_untag)
-                    .setWidth(width)
-                    .setHeight(height);
-            swipeRightMenu.addMenuItem(closeItem); // 添加菜单到右侧。
-        }
-    };
-
-    private SwipeMenuViewBindListener mSwipeMenuViewBindListener = new SwipeMenuViewBindListener() {
-        @Override public void onBindMenuView(int position, int menuPosition, View view) {
-            Repository repository = (Repository) expandableItemAdapter.getItem(position);
-            SwipeMenuBridge menuBridge = (SwipeMenuBridge) view.getTag();
-
-            ImageView imageView = menuBridge.getImageView();
-            if (menuBridge.getDirection() == SwipeMenuRecyclerView.LEFT_DIRECTION){
-                if (repository.like == 1){
-                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.RED));
-                }else{
-                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_unlike, Color.RED));
-                }
-            }
         }
     };
 
@@ -483,5 +389,25 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
     @Override public void onDestroyView() {
         super.onDestroyView();
         EventManager.getInstanse().unregister(this);
+    }
+
+    @Override
+    RecyclerView.Adapter getAdapter() {
+        return expandableItemAdapter;
+    }
+
+    @Override
+    Repository getItem(int position) {
+        return (Repository) expandableItemAdapter.getItem(position);
+    }
+
+    @Override
+    protected boolean isShowMenu(int viewType) {
+        return viewType == ExpandableItemAdapter.TYPE_LEVEL_1;
+    }
+
+    @Override
+    void afterRepoInsertDB(Repository repository) {
+        loadData();
     }
 }
