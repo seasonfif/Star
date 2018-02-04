@@ -24,6 +24,18 @@
         <item name="widgetBackground">@color/colorPrimary_cyan</item>
     </style>
 
+    <style name="App_Teal" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary_teal</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_teal</item>
+        <item name="colorAccent">@color/colorAccent_teal</item>
+
+        <item name="app_primary_color">@color/colorPrimary_teal</item>
+        <item name="app_primary_dark_color">@color/colorPrimaryDark_teal</item>
+        <item name="app_accent_color">@color/colorAccent_teal</item>
+        <item name="widgetBackground">@color/colorPrimary_teal</item>
+    </style>
+
     <style name="App_Red" parent="AppTheme">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary_red</item>

@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -26,6 +25,7 @@ public class ThemeUtil {
     public static final String INDIGO = "indigo";
     public static final String RED = "red";
     public static final String CYAN = "cyan";
+    public static final String TEAL = "teal";
     public static final String BLACK = "black";
 
     private static String getCurrentTheme(Context ctx){
@@ -51,6 +51,8 @@ public class ThemeUtil {
                 return R.style.App_Red;
             case CYAN:
                 return R.style.App_Cyan;
+            case TEAL:
+                return R.style.App_Teal;
             case BLACK:
                 return R.style.App_Black;
             default:

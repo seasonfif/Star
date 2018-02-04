@@ -294,7 +294,7 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
                     menuBridge.getImageView().setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.RED));
                 }else{
                     repository.like = 0;
-                    menuBridge.getImageView().setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.WHITE));
+                    menuBridge.getImageView().setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_unlike, Color.RED));
                 }
                 DBEngine.insertOrReplace(repository);
                 EventManager.getInstanse().notifyAll(DataObserver.SINGLE, repository);
@@ -327,15 +327,15 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
 
             SwipeMenuItem addItem = new SwipeMenuItem(getContext())
-                .setBackgroundColorResource(ThemeUtil.getResIdByAttr(getActivity(), R.attr.app_accent_color))
-                .setImage(R.drawable.ic_like)
+                .setBackgroundColorResource(R.color.menu_bg)
+                .setImage(R.drawable.ic_unlike)
                 .setWidth(width)
                 .setHeight(height);
             swipeLeftMenu.addMenuItem(addItem); // 添加菜单到左侧。
 
             SwipeMenuItem closeItem = new SwipeMenuItem(getContext())
-                .setBackgroundColorResource(ThemeUtil.getResIdByAttr(getActivity(), R.attr.app_accent_color))
-                .setImage(R.drawable.ic_tag)
+                .setBackgroundColorResource(R.color.menu_bg)
+                .setImage(R.drawable.ic_untag)
                 .setWidth(width)
                 .setHeight(height);
             swipeRightMenu.addMenuItem(closeItem); // 添加菜单到右侧。
@@ -352,13 +352,13 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
                 if (repository.like == 1){
                     imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.RED));
                 }else{
-                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.WHITE));
+                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_unlike, Color.RED));
                 }
             }
 
             if (menuBridge.getDirection() == SwipeMenuRecyclerView.RIGHT_DIRECTION){
                 if (TextUtils.isEmpty(repository.group)){
-                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_tag, Color.WHITE));
+                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_untag, Color.RED));
                 }else{
                     imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_tag, Color.RED));
                 }
@@ -382,7 +382,7 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
         //设置标题
         builder.setTitle("请选择");
         //设置图标
-        builder.setIcon(R.drawable.ic_tag);
+        builder.setIcon(ThemeUtil.tintDrawable(R.drawable.ic_tag, Color.RED));
         builder.setSingleChoiceItems(tags.toArray(new String[]{}), index, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

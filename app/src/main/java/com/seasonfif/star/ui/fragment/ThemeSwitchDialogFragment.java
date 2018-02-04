@@ -105,12 +105,14 @@ public class ThemeSwitchDialogFragment extends DialogFragment {
 
   private String getThemeById(int i) {
     if (i == 0){
-      return ThemeUtil.INDIGO;
-    } else if(i == 1){
       return ThemeUtil.RED;
-    } else if(i == 2){
+    } else if(i == 1){
       return ThemeUtil.CYAN;
-    } else if(i == 3){
+    } else if(i == 2){
+      return ThemeUtil.INDIGO;
+    }else if(i == 3){
+      return ThemeUtil.TEAL;
+    } else if(i == 4){
       return ThemeUtil.BLACK;
     }
     return ThemeUtil.INDIGO;
@@ -119,8 +121,9 @@ public class ThemeSwitchDialogFragment extends DialogFragment {
   private class ColorAadapter extends BaseAdapter {
 
     int[] colors = new int[]{
-        R.color.colorPrimary_indigo, R.color.colorPrimary_red,
-        R.color.colorPrimary_cyan, R.color.colorPrimary_black
+        R.color.colorPrimary_red, R.color.colorPrimary_cyan,
+            R.color.colorPrimary_indigo, R.color.colorPrimary_teal,
+            R.color.colorPrimary_black
     };
 
     ColorAadapter(){

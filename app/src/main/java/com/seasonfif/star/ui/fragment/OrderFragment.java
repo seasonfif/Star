@@ -345,7 +345,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
                     menuBridge.getImageView().setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.RED));
                 }else{
                     repository.like = 0;
-                    menuBridge.getImageView().setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.WHITE));
+                    menuBridge.getImageView().setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_unlike, Color.RED));
                 }
                 DBEngine.insertOrReplace(repository);
             }
@@ -373,15 +373,15 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
 
             SwipeMenuItem addItem = new SwipeMenuItem(getContext())
-                    .setBackgroundColorResource(ThemeUtil.getResIdByAttr(getActivity(), R.attr.app_accent_color))
-                    .setImage(R.drawable.ic_like)
+                    .setBackgroundColorResource(R.color.menu_bg)
+                    .setImage(R.drawable.ic_unlike)
                     .setWidth(width)
                     .setHeight(height);
             swipeLeftMenu.addMenuItem(addItem); // 添加菜单到左侧。
 
             SwipeMenuItem closeItem = new SwipeMenuItem(getContext())
-                    .setBackgroundColorResource(ThemeUtil.getResIdByAttr(getActivity(), R.attr.app_accent_color))
-                    .setImage(R.drawable.ic_launcher)
+                    .setBackgroundColorResource(R.color.menu_bg)
+                    .setImage(R.drawable.ic_untag)
                     .setWidth(width)
                     .setHeight(height);
             swipeRightMenu.addMenuItem(closeItem); // 添加菜单到右侧。
@@ -398,7 +398,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
                 if (repository.like == 1){
                     imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.RED));
                 }else{
-                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_like, Color.WHITE));
+                    imageView.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_unlike, Color.RED));
                 }
             }
         }
