@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+  <item>
+    <color
+      android:id="@+id/bitmap_splash"
+      android:color="@color/colorPrimary_indigo">
+    </color>
+  </item>
+  <item
+    android:gravity="center"
+    android:height="@dimen/dimen_80"
+    android:width="@dimen/dimen_80">
+    <bitmap
+      android:gravity="center"
+      android:src="@mipmap/ic_launcher">
+    </bitmap >
+  </item>
+</layer-list>
