@@ -1,5 +1,6 @@
 package com.seasonfif.star.ui.fragment;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.seasonfif.star.R;
@@ -26,7 +28,9 @@ import com.seasonfif.star.ui.adapter.RepoAdapter;
 import com.seasonfif.star.ui.helper.DataObserver;
 import com.seasonfif.star.ui.helper.EventManager;
 import com.seasonfif.star.utils.Navigator;
+import com.seasonfif.star.utils.ThemeUtil;
 import com.seasonfif.star.widget.DefineLoadMoreView;
+import com.yanzhenjie.loading.LoadingView;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
@@ -55,6 +59,12 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
     FloatingActionButton mFloatingActionButton;
     @BindView(R.id.content_container)
     SwipeRefreshLayout mContentContainer;
+    @BindView(R.id.empty)
+    View mEmpty;
+    @BindView(R.id.no_data)
+    TextView mNoData;
+    @BindView(R.id.loading)
+    LoadingView mLoadingView;
 
     public static String KEY_TITLE = "title";
     private int pageIndex = 1;
@@ -97,10 +107,20 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
         mToolbar.inflateMenu(R.menu.star_menu);
         mToolbar.setOnMenuItemClickListener(this);
 
-        View customerView = initCustomerView();
-        if (customerView != null) {
-            mContentContainer.addView(customerView);
-        }
+        int color1 = ThemeUtil.getColor(getContext(), R.attr.app_accent_color);
+        int color2 = ThemeUtil.getColor(getContext(), R.attr.app_primary_color);
+        int color3 = ThemeUtil.getColor(getContext(), R.attr.app_primary_dark_color);
+        mLoadingView.setCircleColors(color1, color2, color3);
+
+        mNoData.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "Satisfy-Regular.ttf"));
+        mEmpty.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getData(true, true);
+            }
+        });
+
+        initCustomerView();
 
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,7 +135,7 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
             mRecyclerView.smoothScrollToPosition(0);
     }
 
-    private View initCustomerView() {
+    private void initCustomerView() {
         mContentContainer.setOnRefreshListener(mRefreshListener);
 
         mRecyclerView = new SwipeMenuRecyclerView(getContext());
@@ -132,16 +152,19 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
         mRecyclerView.addFooterView(loadMoreView); // 添加为Footer。
         mRecyclerView.setLoadMoreView(loadMoreView); // 设置LoadMoreView更新监听。
         mRecyclerView.setLoadMoreListener(mLoadMoreListener); // 加载更多的监听。
-
-        mRecyclerView.setEmptyView(View.inflate(getContext(), R.layout.empty, null));
+        loadMoreView.setLoadMoreListener(mLoadMoreListener);
 
         repoAdapter = new RepoAdapter(getContext());
         mRecyclerView.setAdapter(repoAdapter);
-        getData(true);
-        return mRecyclerView;
+        getData(true, true);
+        mContentContainer.addView(mRecyclerView);
     }
 
-    private void getData(final boolean refresh) {
+    private void getData(final boolean showLoading, final boolean refresh) {
+        if (showLoading){
+            mLoadingView.setVisibility(View.VISIBLE);
+        }
+
         if (refresh) {
             pageIndex = 1;
             if (repoAdapter.mDataList != null) {
@@ -165,15 +188,22 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
                 .subscribe(new Subscriber<Pair<List<Repository>, Integer>>() {
                     @Override
                     public void onCompleted() {
-
+                        if (showLoading){
+                            mLoadingView.setVisibility(View.GONE);
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         mContentContainer.setRefreshing(false);
                         if (refresh){
-                            mRecyclerView.empty();
+                            mFloatingActionButton.setVisibility(View.GONE);
+                            mContentContainer.setVisibility(View.GONE);
+                            mEmpty.setVisibility(View.VISIBLE);
+                        }else {
+                            mRecyclerView.loadMoreError(0, "网络出现异常，请重试");
                         }
+                        onCompleted();
                     }
 
                     @Override
@@ -184,6 +214,17 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
                             pageIndex = pair.second;
                         }
                         datas.addAll(repos);
+                        if (refresh){
+                            if (datas.size() == 0){
+                                mFloatingActionButton.setVisibility(View.GONE);
+                                mContentContainer.setVisibility(View.GONE);
+                                mEmpty.setVisibility(View.VISIBLE);
+                            }else{
+                                mFloatingActionButton.setVisibility(View.VISIBLE);
+                                mContentContainer.setVisibility(View.VISIBLE);
+                                mEmpty.setVisibility(View.GONE);
+                            }
+                        }
                         repoAdapter.notifyDataSetChanged(datas);
                         mContentContainer.setRefreshing(false);
                         mRecyclerView.loadMoreFinish(repos == null || repos.size() == 0, pair.second != null);
@@ -216,7 +257,7 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
             mRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    getData(true);
+                    getData(false, true);
                 }
             }, 1000); // 延时模拟请求服务器。
         }
@@ -231,7 +272,7 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
             mRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    getData(false);
+                    getData(false, false);
                     /*List<String> strings = createDataList(repoAdapter.getItemCount());
 //                    mDataList.addAll(strings);
                     // notifyItemRangeInserted()或者notifyDataSetChanged().
@@ -306,11 +347,11 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
 
 
     private void refreshWithLoading() {
-        getData(true);
+        getData(true, true);
     }
 
     @Override protected void onHideAvatar() {
-        getData(true);
+        getData(false, true);
     }
 
     @Override

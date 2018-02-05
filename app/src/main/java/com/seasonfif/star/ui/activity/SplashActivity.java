@@ -17,8 +17,6 @@ import com.seasonfif.star.widget.titanic.Typefaces;
 
 public class SplashActivity extends BaseActivity {
 
-    @BindView(R.id.tv) TitanicTextView tv;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
