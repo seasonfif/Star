@@ -364,6 +364,7 @@ public class SwipeMenuRecyclerView extends RecyclerView {
         @Override
         public void onChanged() {
             mAdapterWrapper.notifyDataSetChanged();
+            checkIfEmpty();
         }
 
         @Override
@@ -397,6 +398,23 @@ public class SwipeMenuRecyclerView extends RecyclerView {
             mAdapterWrapper.notifyItemMoved(fromPosition, toPosition);
         }
     };
+
+    private View emptyView;
+
+    public void setEmptyView(View emptyView) {
+        this.emptyView = emptyView;
+    }
+
+    private void checkIfEmpty() {
+        if (emptyView != null && getAdapter() != null) {
+            final boolean emptyViewVisible = mAdapterWrapper.getContentItemCount() == 0;
+            emptyView.setVisibility(emptyViewVisible ? VISIBLE : GONE);
+        }
+    }
+
+    public void empty() {
+        checkIfEmpty();
+    }
 
     private List<View> mHeaderViewList = new ArrayList<>();
     private List<View> mFooterViewList = new ArrayList<>();

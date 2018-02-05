@@ -133,6 +133,8 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
         mRecyclerView.setLoadMoreView(loadMoreView); // 设置LoadMoreView更新监听。
         mRecyclerView.setLoadMoreListener(mLoadMoreListener); // 加载更多的监听。
 
+        mRecyclerView.setEmptyView(View.inflate(getContext(), R.layout.empty, null));
+
         repoAdapter = new RepoAdapter(getContext());
         mRecyclerView.setAdapter(repoAdapter);
         getData(true);
@@ -169,6 +171,9 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
                     @Override
                     public void onError(Throwable e) {
                         mContentContainer.setRefreshing(false);
+                        if (refresh){
+                            mRecyclerView.empty();
+                        }
                     }
 
                     @Override

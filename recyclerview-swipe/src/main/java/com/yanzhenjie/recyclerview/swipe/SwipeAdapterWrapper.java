@@ -91,7 +91,7 @@ public class SwipeAdapterWrapper extends RecyclerView.Adapter<RecyclerView.ViewH
         return getHeaderItemCount() + getContentItemCount() + getFooterItemCount();
     }
 
-    private int getContentItemCount() {
+    public int getContentItemCount() {
         return mAdapter.getItemCount();
     }
 
