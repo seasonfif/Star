@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -21,6 +22,7 @@ import butterknife.ButterKnife;
 import com.seasonfif.star.MyApplication;
 import com.seasonfif.star.R;
 import com.seasonfif.star.constant.Constants;
+import com.seasonfif.star.ui.helper.TagEditSheetDialog;
 import com.seasonfif.star.utils.Navigator;
 import com.seasonfif.star.utils.SettingShared;
 import com.seasonfif.star.utils.ThemeUtil;
@@ -48,6 +50,10 @@ public class SettingFragment extends Fragment implements Toolbar.OnMenuItemClick
   Switch imgSwitcher;
   @BindView(R.id.switch_openwith)
   Switch openwithSwitcher;
+  @BindView(R.id.tag_layout)
+  View tagLayout;
+
+  private BottomSheetDialog sheetDialog;
 
   public static Fragment newInstance() {
     return new SettingFragment();
@@ -98,6 +104,12 @@ public class SettingFragment extends Fragment implements Toolbar.OnMenuItemClick
     openwithSwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         SettingShared.setOpenWithGithub(getActivity(), b);
+      }
+    });
+
+    tagLayout.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View view) {
+          new TagEditSheetDialog(getContext()).show();
       }
     });
   }

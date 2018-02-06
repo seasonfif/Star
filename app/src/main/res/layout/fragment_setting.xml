@@ -69,6 +69,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="?android:attr/selectableItemBackground"
+              android:clickable="true"
               android:padding="20dp">
 
                 <TextView
@@ -98,6 +99,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="?android:attr/selectableItemBackground"
+              android:clickable="true"
               android:padding="20dp">
                 <LinearLayout
                   android:layout_width="wrap_content"
@@ -136,6 +138,7 @@
             <RelativeLayout
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:clickable="true"
               android:background="?android:attr/selectableItemBackground"
               android:padding="20dp">
                 <LinearLayout
@@ -176,6 +179,7 @@
               android:background="#999999"/>
 
             <RelativeLayout
+              android:id="@+id/tag_layout"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="?android:attr/selectableItemBackground"
@@ -190,14 +194,14 @@
                       android:layout_height="wrap_content"
                       android:textColor="#000000"
                       android:textSize="16dp"
-                      android:text="保存标签"/>
+                      android:text="标签管理"/>
                     <TextView
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:layout_marginTop="3dp"
                       android:textSize="12dp"
                       android:textColor="#666666"
-                      android:text="打开之后会将标签分组保存到云端"/>
+                      android:text="编辑仓库标签"/>
                 </LinearLayout>
 
                 <Switch

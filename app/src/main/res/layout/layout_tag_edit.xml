@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="500dp">
+
+    <RelativeLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:background="?app_primary_color"
+        android:elevation="4dp">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/dimen_20"
+        android:textColor="@android:color/white"
+        android:textSize="18dp"
+        android:text="EditTags"/>
+
+      <ImageView
+        android:id="@+id/add_tag"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/dimen_20"
+        android:src="@drawable/ic_add"/>
+    </RelativeLayout>
+
+    <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
+      android:id="@+id/recyclerview"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/top"/>
+
+    <com.yanzhenjie.loading.LoadingView
+        android:id="@+id/loading"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+</RelativeLayout>
