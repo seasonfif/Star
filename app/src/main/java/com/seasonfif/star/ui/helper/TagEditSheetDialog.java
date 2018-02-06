@@ -1,6 +1,7 @@
 package com.seasonfif.star.ui.helper;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +12,10 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.view.animation.TranslateAnimation;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.seasonfif.star.R;
 import com.seasonfif.star.utils.DataUtil;
@@ -30,6 +34,7 @@ import java.util.List;
 public class TagEditSheetDialog {
 
   private Context context;
+  private final float screenW;
   private BottomSheetDialog sheetDialog;
   private ImageView addTag;
   private SwipeMenuRecyclerView recyclerview;
@@ -39,6 +44,7 @@ public class TagEditSheetDialog {
 
   public TagEditSheetDialog(Context context){
     this.context = context;
+    screenW = context.getResources().getDisplayMetrics().widthPixels;
     sheetDialog = new BottomSheetDialog(context);
     View root = LayoutInflater.from(context).inflate(R.layout.layout_tag_edit, null);
     datas = DataUtil.getTagsData();
@@ -114,10 +120,23 @@ public class TagEditSheetDialog {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
       String s = datas.get(position);
-      TagHolder tagHolder = (TagHolder) holder;
+      final TagHolder tagHolder = (TagHolder) holder;
       tagHolder.tv.setText(s);
+
+      final ImageView eb = tagHolder.editBtn;
+      eb.setTag(false);
+      eb.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View view) {
+          boolean hasChange = (boolean) eb.getTag();
+          if (hasChange){
+            triggleRight(eb, tagHolder);
+          }else{
+            triggleLeft(eb, tagHolder);
+          }
+        }
+      });
     }
 
     @Override
@@ -126,12 +145,78 @@ public class TagEditSheetDialog {
     }
   }
 
+  private void triggleRight(final ImageView eb, final TagHolder holder) {
+    int right = eb.getRight();
+    final float delta = screenW/2 - context.getResources().getDimension(R.dimen.dimen_20);
+    Animation animation = new TranslateAnimation(0, delta, 0, 0);
+    animation.setDuration(200);
+    animation.setFillEnabled(true);
+    animation.setFillAfter(true);
+    animation.setInterpolator(new AccelerateInterpolator());
+    animation.setAnimationListener(new Animation.AnimationListener() {
+      @Override public void onAnimationStart(Animation animation) {
+        eb.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_edit, Color.BLACK));
+        holder.edittext.setVisibility(View.GONE);
+      }
+
+      @Override public void onAnimationEnd(Animation animation) {
+        RelativeLayout.LayoutParams params =
+            (RelativeLayout.LayoutParams) eb.getLayoutParams();
+        params.rightMargin -= delta;
+        eb.setLayoutParams(params);
+        eb.clearAnimation();
+        eb.setTag(false);
+        holder.tv.setText(holder.edittext.getText().toString().trim());
+      }
+
+      @Override public void onAnimationRepeat(Animation animation) {
+
+      }
+    });
+    eb.startAnimation(animation);
+  }
+
+  private void triggleLeft(final ImageView eb, final TagHolder holder) {
+    int right = eb.getRight();
+    final float delta = right - screenW/2;
+    Animation animation = new TranslateAnimation(0, -delta, 0, 0);
+    animation.setDuration(200);
+    animation.setFillEnabled(true);
+    animation.setFillAfter(true);
+    animation.setInterpolator(new AccelerateInterpolator());
+    animation.setAnimationListener(new Animation.AnimationListener() {
+      @Override public void onAnimationStart(Animation animation) {
+        eb.setImageDrawable(ThemeUtil.tintDrawable(R.drawable.ic_sure, ThemeUtil.getColor(context, R.attr.app_accent_color)));
+      }
+
+      @Override public void onAnimationEnd(Animation animation) {
+        RelativeLayout.LayoutParams params =
+            (RelativeLayout.LayoutParams) eb.getLayoutParams();
+        params.rightMargin += delta;
+        eb.setLayoutParams(params);
+        eb.clearAnimation();
+        eb.setTag(true);
+        holder.edittext.setVisibility(View.VISIBLE);
+        holder.edittext.setText(holder.tv.getText());
+      }
+
+      @Override public void onAnimationRepeat(Animation animation) {
+
+      }
+    });
+    eb.startAnimation(animation);
+  }
+
   static class TagHolder extends RecyclerView.ViewHolder{
 
     public TextView tv;
+    public ImageView editBtn;
+    private EditText edittext;
     public TagHolder(View itemView) {
       super(itemView);
       tv = itemView.findViewById(R.id.name);
+      editBtn = itemView.findViewById(R.id.edit_btn);
+      edittext = itemView.findViewById(R.id.edittext);
     }
   }
 }

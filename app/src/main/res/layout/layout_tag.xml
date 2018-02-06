@@ -1,19 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
   android:orientation="vertical"
   android:layout_width="match_parent"
-  android:layout_height="wrap_content"
+  android:layout_height="60dp"
+  android:gravity="center_vertical"
   android:background="?android:selectableItemBackground">
 
   <TextView
     android:id="@+id/name"
     android:layout_width="wrap_content"
-    android:layout_height="50dp"
-    android:gravity="center"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
     android:textColor="@android:color/black"
     android:layout_marginLeft="@dimen/dimen_20"
     android:textSize="16dp"
     android:text="tag"/>
+
+  <ImageView
+    android:id="@+id/edit_btn"
+    android:layout_width="24dp"
+    android:layout_height="24dp"
+    android:layout_alignParentRight="true"
+    android:layout_centerVertical="true"
+    android:layout_marginRight="@dimen/dimen_20"
+    android:tint="@android:color/black"
+    android:src="@drawable/ic_edit"
+    android:visibility="visible"/>
+
+  <EditText
+    android:id="@+id/edittext"
+    android:layout_width="150dp"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_centerVertical="true"
+    android:layout_marginRight="@dimen/dimen_20"
+    android:singleLine="true"
+    android:hint="输入标签名"
+    android:visibility="gone"
+    tools:visibility="visible"/>
 
 </RelativeLayout>

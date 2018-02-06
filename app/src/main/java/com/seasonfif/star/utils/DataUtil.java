@@ -10,7 +10,7 @@ import java.util.List;
 public class DataUtil {
 
   public static List<String> getTagsData(){
-    return Arrays.asList(new String[]{"无","控件","框架","工具","android","java","机器学习"});
+    return Arrays.asList(new String[]{"无","控件","框架"});
   }
 
 }
