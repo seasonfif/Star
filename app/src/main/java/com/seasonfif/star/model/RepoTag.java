@@ -8,5 +8,10 @@ import java.io.Serializable;
 
 public class RepoTag implements Serializable{
 
-  String name;
+  public String name;
+  public boolean isEdit = false;
+
+  public RepoTag(String name) {
+    this.name = name;
+  }
 }
