@@ -7,12 +7,10 @@
     </color>
   </item>
   <item
-    android:gravity="center"
-    android:height="@dimen/dimen_80"
-    android:width="@dimen/dimen_80">
+    android:gravity="center">
     <bitmap
       android:gravity="center"
-      android:src="@mipmap/ic_launcher">
+      android:src="@drawable/ic_splash">
     </bitmap >
   </item>
 </layer-list>

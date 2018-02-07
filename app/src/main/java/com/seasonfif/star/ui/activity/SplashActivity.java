@@ -17,12 +17,13 @@ import com.seasonfif.star.widget.titanic.Typefaces;
 
 public class SplashActivity extends BaseActivity {
 
+    @BindView(R.id.tv)
+    TitanicTextView tv;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        startActivity(new Intent(SplashActivity.this, MainActivity.class));
-        finish();
-        /*setContentView(R.layout.activity_splash);
+        setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
 
         tv.setTypeface(Typefaces.get(this, "Satisfy-Regular.ttf"));
@@ -36,6 +37,6 @@ public class SplashActivity extends BaseActivity {
                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
                 finish();
             }
-        }, 2000);*/
+        }, 2000);
     }
 }
