@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,11 @@ import java.util.List;
  */
 
 public class TagEditSheetDialog {
+
+  /**
+   * tag名称字数限制
+   */
+  private static final int NAME_LENGTH = 8;
 
   private Context context;
   private final float screenW;
@@ -99,8 +105,30 @@ public class TagEditSheetDialog {
   }
 
   private void handleAddTag() {
-    datas.add(0, new RepoTag("输入名称"));
-    adapter.notifyItemInserted(0);
+    if (hasNewTag()){
+      new AlertDialog.Builder(context)
+          .setTitle("友情提示：")
+          .setMessage("您已创建一个空标签，请完善")
+          .setCancelable(false)
+          .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+          }).show();
+    }else{
+      datas.add(0, new RepoTag("输入名称", true));
+      adapter.notifyItemInserted(0);
+    }
+  }
+
+  private boolean hasNewTag() {
+    for (int i = 0; i < datas.size(); i++) {
+      RepoTag tag = datas.get(i);
+      if (tag.isNew){
+        return true;
+      }
+    }
+    return false;
   }
 
   private SwipeItemClickListener mSwipeItemClickListener = new SwipeItemClickListener() {
@@ -121,7 +149,7 @@ public class TagEditSheetDialog {
       }
       final boolean finalNeedsOpen = needsOpen;
       new AlertDialog.Builder(context)
-          .setTitle("提示：")
+          .setTitle("友情提示：")
           .setMessage("您将删除该标签")
           .setCancelable(false)
           .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -205,6 +233,25 @@ public class TagEditSheetDialog {
 
   private void triggleCollapse(final RepoTag tag, final TagHolder holder, final boolean dryrun) {
     final ImageView eb = holder.editBtn;
+    final EditText et = holder.edittext;
+    final String tagName = et.getText().toString().trim();
+
+    if (!dryrun){
+      String tip = checkNameValid(tag, tagName);
+      if (!TextUtils.isEmpty(tip)){
+        new AlertDialog.Builder(context)
+            .setTitle("友情提示：")
+            .setMessage(tip)
+            .setCancelable(false)
+            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+              @Override public void onClick(DialogInterface dialogInterface, int i) {
+
+              }
+            }).show();
+        return;
+      }
+    }
+
     int right = eb.getRight();
     final float delta = screenW/2 - context.getResources().getDimension(R.dimen.dimen_20);
     Animation animation = new TranslateAnimation(0, delta, 0, 0);
@@ -227,9 +274,11 @@ public class TagEditSheetDialog {
         tag.isEdit = false;
 
         if (!dryrun){
-          String name = holder.edittext.getText().toString().trim();
-          holder.tv.setText(name);
-          tag.name = name;
+          if (tag.isNew){
+            tag.isNew = false;
+          }
+          holder.tv.setText(tagName);
+          tag.name = tagName;
         }
       }
 
@@ -238,6 +287,33 @@ public class TagEditSheetDialog {
       }
     });
     eb.startAnimation(animation);
+  }
+
+  private String checkNameValid(RepoTag tag, String tagName) {
+    boolean isValid = true;
+    String validTip = "";
+
+    //校验标签名是否合法
+    if (!TextUtils.isEmpty(tagName)){
+
+      int nameLength = tagName.length();
+      if (nameLength > NAME_LENGTH){
+        isValid = false;
+        validTip = "标签名长度限制8个字符";
+      }else{
+        for (RepoTag repoTag : datas) {
+          if (tag != repoTag && tagName.equals(repoTag.name)){
+            isValid = false;
+            validTip = "该标签名已存在";
+            break;
+          }
+        }
+      }
+    }else{
+      isValid = false;
+      validTip = "标签名不能为空";
+    }
+    return validTip;
   }
 
   private void triggleExpand(final RepoTag tag, final TagHolder holder) {
