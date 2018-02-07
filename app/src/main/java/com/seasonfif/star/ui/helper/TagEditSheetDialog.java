@@ -111,13 +111,13 @@ public class TagEditSheetDialog {
   };
 
   private SwipeItemLongClickListener mSwipeItemLongClickListener = new SwipeItemLongClickListener() {
-    @Override public void onItemLongClick(View itemView, final int position) {
+    @Override public void onItemLongClick(final View itemView, final int position) {
       boolean needsOpen = false;
       final RepoTag repoTag = datas.get(position);
-      //如果正在编辑状态，需要关闭编辑，并在取消时恢复编辑
+      //如果正在编辑状态，需要关闭编辑，并在取消时恢复编辑,否则编辑时删除 会在添加时UI异常
       if (repoTag.isEdit){
          needsOpen = true;
-         performEditBtn(position);
+         triggleCollapseDryRun(position);
       }
       final boolean finalNeedsOpen = needsOpen;
       new AlertDialog.Builder(context)
@@ -132,11 +132,10 @@ public class TagEditSheetDialog {
           }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
         @Override public void onClick(DialogInterface dialogInterface, int i) {
           if (finalNeedsOpen){
-            performEditBtn(position);
+            triggleExpand(repoTag, (TagHolder) recyclerview.getChildViewHolder(itemView));
           }
         }
       }).show();
-
     }
   };
 
@@ -152,27 +151,27 @@ public class TagEditSheetDialog {
     }
   }
 
-  private class TagAdapter extends RecyclerView.Adapter{
+  private class TagAdapter extends RecyclerView.Adapter<TagHolder>{
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TagHolder onCreateViewHolder(ViewGroup parent, int viewType) {
       View view = LayoutInflater.from(context).inflate(R.layout.layout_tag, parent, false);
       TagHolder holder = new TagHolder(view);
       return holder;
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final TagHolder holder, int position) {
       final RepoTag repoTag = datas.get(position);
-      final TagHolder tagHolder = (TagHolder) holder;
+      final TagHolder tagHolder = holder;
       tagHolder.tv.setText(repoTag.name);
       final ImageView eb = tagHolder.editBtn;
       eb.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View view) {
           if (repoTag.isEdit){
-            triggleRight(repoTag, eb, tagHolder);
+            triggleCollapse(repoTag, tagHolder, false);
           }else{
             checkEditMode();
-            triggleLeft(repoTag, eb, tagHolder);
+            triggleExpand(repoTag, tagHolder);
           }
         }
       });
@@ -182,24 +181,30 @@ public class TagEditSheetDialog {
     public int getItemCount() {
       return datas.size();
     }
+
+    public RepoTag getItem(int position){
+      return datas.get(position);
+    }
   }
 
   private void checkEditMode() {
     for (int i = 0; i < datas.size(); i++) {
       RepoTag tag = datas.get(i);
       if (tag.isEdit){
-        performEditBtn(i);
+        triggleCollapseDryRun(i);
         return;
       }
     }
   }
 
-  private void performEditBtn(int position){
-    View view = recyclerview.getChildAt(position);
-    view.findViewById(R.id.edit_btn).performClick();
+  private void triggleCollapseDryRun(int position){
+    RepoTag repoTag = adapter.getItem(position);
+    TagHolder holder = (TagHolder) recyclerview.findViewHolderForAdapterPosition(position);
+    triggleCollapse(repoTag, holder, true);
   }
 
-  private void triggleRight(final RepoTag tag, final ImageView eb, final TagHolder holder) {
+  private void triggleCollapse(final RepoTag tag, final TagHolder holder, final boolean dryrun) {
+    final ImageView eb = holder.editBtn;
     int right = eb.getRight();
     final float delta = screenW/2 - context.getResources().getDimension(R.dimen.dimen_20);
     Animation animation = new TranslateAnimation(0, delta, 0, 0);
@@ -219,10 +224,13 @@ public class TagEditSheetDialog {
         params.rightMargin -= delta;
         eb.setLayoutParams(params);
         eb.clearAnimation();
-        String name = holder.edittext.getText().toString().trim();
-        holder.tv.setText(name);
-        tag.name = name;
         tag.isEdit = false;
+
+        if (!dryrun){
+          String name = holder.edittext.getText().toString().trim();
+          holder.tv.setText(name);
+          tag.name = name;
+        }
       }
 
       @Override public void onAnimationRepeat(Animation animation) {
@@ -232,7 +240,8 @@ public class TagEditSheetDialog {
     eb.startAnimation(animation);
   }
 
-  private void triggleLeft(final RepoTag tag, final ImageView eb, final TagHolder holder) {
+  private void triggleExpand(final RepoTag tag, final TagHolder holder) {
+    final ImageView eb = holder.editBtn;
     int right = eb.getRight();
     final float delta = right - screenW/2;
     Animation animation = new TranslateAnimation(0, -delta, 0, 0);
@@ -254,6 +263,7 @@ public class TagEditSheetDialog {
         holder.edittext.setVisibility(View.VISIBLE);
         holder.edittext.setText(holder.tv.getText());
         tag.isEdit = true;
+
       }
 
       @Override public void onAnimationRepeat(Animation animation) {
