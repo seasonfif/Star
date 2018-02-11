@@ -1,11 +1,10 @@
 package com.seasonfif.star.net;
 
+import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.seasonfif.star.constant.Constants;
-
 import java.util.concurrent.TimeUnit;
-
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -21,6 +20,19 @@ public class RetrofitEngine {
   public static final int CONNECT_TIMEOUT_MILLIS = 30 * 1000;
   public static final int READ_TIMEOUT_MILLIS = 30 * 1000;
 
+  public static Retrofit getRetrofitWithBaseToken(String baseToken){
+
+    Gson gson = new GsonBuilder()
+        .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .create();
+    Retrofit retrofit = new Retrofit.Builder()
+        .baseUrl(Constants.API_URL)
+        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .client(initOkHttpClient(baseToken)).build();
+    return retrofit;
+  }
+
   public static Retrofit getRetrofit(){
     Gson gson = new GsonBuilder()
         .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
@@ -29,17 +41,20 @@ public class RetrofitEngine {
         .baseUrl(Constants.API_URL)
         .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create(gson))
-        .client(initOkHttpClient()).build();
+        .client(initOkHttpClient(null)).build();
     return retrofit;
   }
 
-  public static OkHttpClient initOkHttpClient() {
+  private static OkHttpClient initOkHttpClient(String baseToken) {
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
     builder.connectTimeout(CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
     builder.readTimeout(READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
     builder.writeTimeout(READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
-
-    builder.addInterceptor(new HeaderInterceptor());
+    if (TextUtils.isEmpty(baseToken)){
+      builder.addInterceptor(new HeaderInterceptor());
+    }else{
+      builder.addInterceptor(new LoginInterceptor(baseToken));
+    }
     return builder.build();
   }
 }

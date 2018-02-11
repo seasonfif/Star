@@ -13,10 +13,6 @@ import com.seasonfif.star.utils.ThemeUtil;
 
 public class BaseActivity extends AppCompatActivity {
 
-    static {
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-    }
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(ThemeUtil.getTheme(this));

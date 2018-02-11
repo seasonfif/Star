@@ -10,7 +10,6 @@ import com.amitshekhar.DebugDB;
 import com.seasonfif.star.database.GreenDaoManager;
 import com.seasonfif.star.ui.activity.SplashActivity;
 import com.seasonfif.star.utils.LauncherUtil;
-import com.seasonfif.star.utils.OAuthShared;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -34,7 +33,6 @@ public class MyApplication extends Application {
         DebugDB.getAddressLog();
 
         createShortCut();
-        OAuthShared.saveToken(this, "");
     }
 
     private void createShortCut(){

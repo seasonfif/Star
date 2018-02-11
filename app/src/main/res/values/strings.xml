@@ -13,6 +13,12 @@
 
   <string name="no_browser_install_in_system">系统中没有安装浏览器</string>
 
+  <string name="login_authenticat">登录中...</string>
+  <string name="login_account_error">账户或者密码错误</string>
+  <string name="toast_network">网络未连接</string>
+  <string name="login_illegal_emial">非法的邮箱账号!</string>
+  <string name="login_invalid_password">非法的密码!</string>
+
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
