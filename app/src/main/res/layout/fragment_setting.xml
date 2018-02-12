@@ -204,13 +204,15 @@
                       android:text="编辑仓库标签"/>
                 </LinearLayout>
 
-                <Switch
+                <ImageView
                   android:id="@+id/switch_save"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_centerVertical="true"
                   android:layout_alignParentRight="true"
-                  android:checked="true"/>
+                  android:layout_marginRight="10dp"
+                  android:src="@drawable/ic_click"
+                  android:tint="?app_accent_color"/>
 
             </RelativeLayout>
 

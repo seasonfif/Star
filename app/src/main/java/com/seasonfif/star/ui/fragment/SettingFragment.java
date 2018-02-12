@@ -54,8 +54,6 @@ public class SettingFragment extends Fragment implements Toolbar.OnMenuItemClick
   @BindView(R.id.tag_layout)
   View tagLayout;
 
-  private BottomSheetDialog sheetDialog;
-
   public static Fragment newInstance() {
     return new SettingFragment();
   }
