@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.seasonfif.star.R;
+import com.seasonfif.star.utils.OAuthShared;
 import com.seasonfif.star.widget.titanic.Titanic;
 import com.seasonfif.star.widget.titanic.TitanicTextView;
 import com.seasonfif.star.widget.titanic.Typefaces;
@@ -34,9 +36,19 @@ public class SplashActivity extends BaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override public void run() {
                 titanic.cancel();
-                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                finish();
+                aboard();
+
             }
         }, 2000);
+    }
+
+    private void aboard() {
+        String token = OAuthShared.getToken(this);
+        if (TextUtils.isEmpty(token)){
+            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+        }else{
+            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+        }
+        finish();
     }
 }

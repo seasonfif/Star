@@ -7,12 +7,16 @@ package com.seasonfif.star.constant;
  */
 public class Constants {
 
+  public final static String GITHUB_URL = "https://github.com";
   public final static String API_URL = "https://api.github.com";
   public final static String DB_NAME_STAR = "my_star";
   public static final String HIDE_AVATAR = "com.seasonfif.star.setting.hide_avatar";
   public static final String THEME_CHANGE = "com.seasonfif.star.setting.theme_change";
-  public final static String CLIENT_ID = "17ff3dcc7b25df9df856";
-  public final static String CLIENT_SECRET = "4e03426b6a9250c1c7f833e7c6907307d56641d8";
+
+  public final static String OAUTH2_URL = "https://github.com/login/oauth/authorize";
+  public final static String OAUTH2_SCOPE = "user,repo,gist";
+  public final static String CLIENT_ID = "a1cb539538bbd202a788";
+  public final static String CLIENT_SECRET = "f5d5572cde0d887ee6151802ee337c26f32ff16a";
 
   public final static int PER_PAGE = 10;
 

@@ -6,6 +6,7 @@ import com.seasonfif.star.model.CreateAuthorization;
 import com.seasonfif.star.model.OauthToken;
 import retrofit2.Response;
 import retrofit2.http.Body;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 import rx.Observable;
@@ -17,8 +18,11 @@ public interface LoginService {
         @NonNull @Body CreateAuthorization createAuthorization);
 
     @POST("/login/oauth/access_token")
+    @Headers("Accept: application/json")
     Observable<Response<OauthToken>> getAccessToken(
-        @Query("client_id") String clientId, @Query("client_secret") String clientSecret,
-        @Query("code") String code, @Query("state") String state);
+        @Query("client_id") String clientId,
+        @Query("client_secret") String clientSecret,
+        @Query("code") String code,
+        @Query("state") String state);
 
 }

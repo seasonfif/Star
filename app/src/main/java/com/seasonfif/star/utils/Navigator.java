@@ -55,8 +55,9 @@ public class Navigator {
     openInBrowser(activity, url);
   }
 
-  private static void openInBrowser(@NonNull Context context, @NonNull String url) {
+  public static void openInBrowser(@NonNull Context context, @NonNull String url) {
     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+    intent.addCategory(Intent.CATEGORY_BROWSABLE);
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     if (intent.resolveActivity(context.getPackageManager()) != null) {
       context.startActivity(intent);

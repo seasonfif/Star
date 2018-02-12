@@ -41,7 +41,18 @@
             </intent-filter>
         </activity>
         <activity
-          android:name=".ui.activity.LoginActivity"/>
+          android:name=".ui.activity.LoginActivity"
+          android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                  android:host="star"
+                  android:path="/login"
+                  android:scheme="seasonfif"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.activity.MainActivity"/>
     </application>

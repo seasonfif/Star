@@ -16,14 +16,15 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.seasonfif.star.MyApplication;
 import com.seasonfif.star.R;
 import com.seasonfif.star.constant.Constants;
+import com.seasonfif.star.ui.activity.LoginActivity;
 import com.seasonfif.star.ui.helper.TagEditSheetDialog;
 import com.seasonfif.star.utils.Navigator;
+import com.seasonfif.star.utils.OAuthShared;
 import com.seasonfif.star.utils.SettingShared;
 import com.seasonfif.star.utils.ThemeUtil;
 import com.seasonfif.star.widget.CircleImageView;
@@ -156,7 +157,10 @@ public class SettingFragment extends Fragment implements Toolbar.OnMenuItemClick
   @Override public boolean onMenuItemClick(MenuItem item) {
     int id = item.getItemId();
     if (id == R.id.action_logout) {
-      Toast.makeText(getActivity(), "logout", Toast.LENGTH_SHORT).show();
+      OAuthShared.saveToken(getContext(), "");
+      Intent it = new Intent(getContext(), LoginActivity.class);
+      startActivity(it);
+      getActivity().finish();
       return true;
     }
     return false;

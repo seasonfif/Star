@@ -33,6 +33,18 @@ public class RetrofitEngine {
     return retrofit;
   }
 
+  public static Retrofit getRetrofitWithUrl(String url){
+    Gson gson = new GsonBuilder()
+        .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .create();
+    Retrofit retrofit = new Retrofit.Builder()
+        .baseUrl(url)
+        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .client(initSimpleClient()).build();
+    return retrofit;
+  }
+
   public static Retrofit getRetrofit(){
     Gson gson = new GsonBuilder()
         .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
@@ -55,6 +67,14 @@ public class RetrofitEngine {
     }else{
       builder.addInterceptor(new LoginInterceptor(baseToken));
     }
+    return builder.build();
+  }
+
+  private static OkHttpClient initSimpleClient() {
+    OkHttpClient.Builder builder = new OkHttpClient.Builder();
+    builder.connectTimeout(CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+    builder.readTimeout(READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+    builder.writeTimeout(READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
     return builder.build();
   }
 }
