@@ -12,11 +12,13 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.dd.CircularProgressButton;
+import com.seasonfif.star.MyApplication;
 import com.seasonfif.star.R;
 import com.seasonfif.star.constant.Constants;
 import com.seasonfif.star.model.BasicToken;
 import com.seasonfif.star.model.CreateAuthorization;
 import com.seasonfif.star.model.OauthToken;
+import com.seasonfif.star.model.User;
 import com.seasonfif.star.net.LoginService;
 import com.seasonfif.star.net.RetrofitEngine;
 import com.seasonfif.star.utils.Navigator;
@@ -112,10 +114,29 @@ public class LoginActivity extends BaseActivity {
 
   private void authorizationSuccess(String token){
     OAuthShared.saveToken(LoginActivity.this, token);
-    loginBn.setProgress(100);
-    Intent it = new Intent(LoginActivity.this, MainActivity.class);
-    startActivity(it);
-    finish();
+    Observable<Response<User>> me =
+        RetrofitEngine.getRetrofit()
+            .create(LoginService.class)
+            .me();
+    me.subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Subscriber<Response<User>>() {
+          @Override public void onCompleted() {
+
+          }
+
+          @Override public void onError(Throwable e) {
+            authorizationFailed();
+          }
+
+          @Override public void onNext(Response<User> userResponse) {
+            MyApplication.INSTANCE.saveUser(userResponse.body());
+            loginBn.setProgress(100);
+            Intent it = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(it);
+            finish();
+          }
+        });
   }
 
   private void authorizationFailed(){

@@ -8,8 +8,11 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 import com.amitshekhar.DebugDB;
 import com.seasonfif.star.database.GreenDaoManager;
+import com.seasonfif.star.model.User;
 import com.seasonfif.star.ui.activity.SplashActivity;
+import com.seasonfif.star.utils.DataUtil;
 import com.seasonfif.star.utils.LauncherUtil;
+import com.seasonfif.star.utils.OAuthShared;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -19,6 +22,7 @@ import com.squareup.picasso.Picasso;
 public class MyApplication extends Application {
 
     public static MyApplication INSTANCE;
+    private User user;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -72,5 +76,19 @@ public class MyApplication extends Application {
             url = "";
         }
         Picasso.with(this).load(url).placeholder(R.drawable.avatar_holder).into(view);
+    }
+
+    public void saveUser(User user) {
+        this.user = user;
+        if (user != null){
+            OAuthShared.saveMe(this, DataUtil.toJson(user));
+        }
+    }
+
+    public User loadUser() {
+        if (user == null){
+            user = DataUtil.getObject(OAuthShared.getMe(this), User.class);
+        }
+        return user;
     }
 }

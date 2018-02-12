@@ -78,10 +78,10 @@ public class SettingFragment extends Fragment implements Toolbar.OnMenuItemClick
     mToolbar.inflateMenu(R.menu.setting_menu);
     mToolbar.setOnMenuItemClickListener(this);
 
-    MyApplication.INSTANCE.loadAvatar("https://avatars2.githubusercontent.com/u/6039633?v=4", mAvatar);
+    MyApplication.INSTANCE.loadAvatar(MyApplication.INSTANCE.loadUser().avatar_url, mAvatar);
     mAvatar.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
-        Navigator.openUserProfile(getActivity(), "seasonfif");
+        Navigator.openUserProfile(getActivity(), MyApplication.INSTANCE.loadUser().login);
       }
     });
 
