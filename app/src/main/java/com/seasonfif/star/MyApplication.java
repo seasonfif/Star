@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.widget.ImageView;
+
 import com.amitshekhar.DebugDB;
+import com.crashlytics.android.Crashlytics;
 import com.seasonfif.star.database.GreenDaoManager;
 import com.seasonfif.star.model.User;
 import com.seasonfif.star.ui.activity.SplashActivity;
@@ -14,6 +16,9 @@ import com.seasonfif.star.utils.DataUtil;
 import com.seasonfif.star.utils.LauncherUtil;
 import com.seasonfif.star.utils.OAuthShared;
 import com.squareup.picasso.Picasso;
+import com.umeng.analytics.MobclickAgent;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by lxy on 2018/1/27.
@@ -33,9 +38,13 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        Fabric.with(this, new Crashlytics());
+        MobclickAgent.openActivityDurationTrack(false);
+        MobclickAgent.enableEncrypt(true);
+
         GreenDaoManager.getInstance();
         DebugDB.getAddressLog();
-
         createShortCut();
     }
 
@@ -82,6 +91,9 @@ public class MyApplication extends Application {
         this.user = user;
         if (user != null){
             OAuthShared.saveMe(this, DataUtil.toJson(user));
+            MobclickAgent.onProfileSignIn("github", user.login + "/" + user.email);
+            Crashlytics.setUserEmail(user.email);
+            Crashlytics.setUserName(user.login);
         }
     }
 

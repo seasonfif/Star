@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 26
@@ -21,14 +22,79 @@ android {
         targetGenDir 'src/main/java'
     }
 
+    lintOptions {
+        checkReleaseBuilds false
+    }
+
+    //签名设置
+    signingConfigs {
+        debug {
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+        }
+        release {
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+        }
+    }
+
     buildTypes {
         debug {
+            //debug开发环境
+            buildConfigField "boolean", "isDebug", "true"
             debuggable true
         }
 
         release {
-            minifyEnabled false
+            buildConfigField "boolean", "isDebug", "false"
+            debuggable false
+            minifyEnabled true//是否启动混淆
+            shrinkResources true //是否移除无用资源文件，shrinkResources依赖于minifyEnabled，必须和minifyEnabled一起用
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "type"
+    //渠道打包信息
+    productFlavors {
+        baidu {
+            dimension "type"
+            signingConfig signingConfigs.release
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "baidu"]
+        }
+        tencent {
+            dimension "type"
+            signingConfig signingConfigs.release
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "tencent"]
+        }
+        u360 {
+            dimension "type"
+            signingConfig signingConfigs.release
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "u360"]
+        }
+        xiaomi {
+            dimension "type"
+            signingConfig signingConfigs.release
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "xiaomi"]
+        }
+    }
+
+    applicationVariants.all { variant ->
+
+        //这个修改输出的APK路径
+        variant.getPackageApplication().outputDirectory = new File(project.rootDir.absolutePath + "/apk")
+        variant.getPackageApplication().outputScope.apkDatas.forEach { apkData ->
+            //这个修改输出APK的文件名
+            apkData.outputFileName = "ohmystar_" +
+                    variant.flavorName + "_" +
+                    variant.buildType.name + "_" +
+                    variant.versionName + "_" +
+                    releaseTime()+
+                    ".apk"
         }
     }
 }
@@ -53,7 +119,16 @@ dependencies {
   compile 'org.greenrobot:greendao:3.2.0'
   compile 'com.squareup.picasso:picasso:2.5.2'
 
+  compile('com.crashlytics.sdk.android:crashlytics:2.9.0@aar') {
+      transitive = true;
+  }
+  compile 'com.umeng.analytics:analytics:latest.integration'
+
   compile project(path: ':recyclerview-swipe')
   implementation project(':library-adapter')
   implementation project(':library-progressbutton')
+}
+
+def releaseTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getTimeZone("UTC"))
 }

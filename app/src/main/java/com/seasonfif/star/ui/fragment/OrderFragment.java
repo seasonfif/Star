@@ -154,7 +154,7 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
     }
 
     private View initCustomerView() {
-        mContentContainer.setEnabled(true);
+        mContentContainer.setEnabled(false);
         mContentContainer.setOnRefreshListener(mRefreshListener);
 
         mRecyclerView = new SwipeMenuRecyclerView(getContext());

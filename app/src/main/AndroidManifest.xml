@@ -30,6 +30,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/App_Indigo">
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="8a4f2195e0758e8a1751a7eb44a916c91d8ea8f7" />
+        <meta-data android:value="5a92a15bf29d985e190003d8" android:name="UMENG_APPKEY"/>
+        <meta-data android:value="${UMENG_CHANNEL_VALUE}" android:name="UMENG_CHANNEL"/>
         <activity
             android:name=".ui.activity.SplashActivity"
             android:label="@string/app_name"

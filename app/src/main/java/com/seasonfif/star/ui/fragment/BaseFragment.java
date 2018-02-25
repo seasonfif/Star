@@ -25,6 +25,7 @@ import com.seasonfif.star.model.RepoTag;
 import com.seasonfif.star.model.Repository;
 import com.seasonfif.star.utils.DataUtil;
 import com.seasonfif.star.utils.ThemeUtil;
+import com.umeng.analytics.MobclickAgent;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
@@ -238,6 +239,15 @@ public abstract class BaseFragment extends Fragment {
         return index;
     }
 
+    @Override public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart(this.getClass().getSimpleName());
+    }
+
+    @Override public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd(this.getClass().getSimpleName());
+    }
 
     @Override public void onDestroy() {
         super.onDestroy();
