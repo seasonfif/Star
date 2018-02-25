@@ -19,16 +19,9 @@
 -dontwarn java.lang.invoke.*
 
 #避免混淆导入的model
--libraryjars ../module_githubsdk
--libraryjars ../module_pullzoomview
--libraryjars ../module_floatingactionmenu
--libraryjars ../module_markdownview
--libraryjars ../module_breadcrumbs
--libraryjars ../update/baidu
--libraryjars ../update/tencent
--libraryjars ../update/u360
--libraryjars ../update/xiaomi
--libraryjars ../update/google
+-libraryjars ../recyclerview-swipe
+-libraryjars ../library-adapter
+-libraryjars ../library-progressbutton
 
 # 百度自动更新
 -keep class com.baidu.appsearch.patchupdate.**{*;}
@@ -118,6 +111,13 @@
 -keep public class org.codehaus.* { *; }
 -keep public class java.nio.* { *; }
 
+#greendao3.2.0,此是针对3.2.0，如果是之前的，可能需要更换下包名
+-keep class org.greenrobot.greendao.**{*;}
+-keepclassmembers class * extends org.greenrobot.greendao.AbstractDao {
+public static java.lang.String TABLENAME;
+}
+-keep class **$Properties
+
 # 保留support下的所有类及其内部类
 -keep class android.support.** {*;}
 # 保留继承的
@@ -148,14 +148,14 @@
     public static ** test();
 }
 
-# Retrofit 1.X
--keep class com.squareup.okhttp.** { *; }
--keep class retrofit.** { *; }
--keep interface com.squareup.okhttp.** { *; }
+# Retrofit 2.X
+-keep class okhttp3.** { *; }
+-keep class retrofit2.** { *; }
+-keep interface okhttp3.** { *; }
 
--dontwarn com.squareup.okhttp.**
+-dontwarn okhttp3.**
 -dontwarn okio.**
--dontwarn retrofit.**
+-dontwarn retrofit2.**
 -dontwarn rx.**
 
 -keepclasseswithmembers class * {

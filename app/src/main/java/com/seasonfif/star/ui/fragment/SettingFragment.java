@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -16,8 +15,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 import com.seasonfif.star.MyApplication;
 import com.seasonfif.star.R;
 import com.seasonfif.star.constant.Constants;
@@ -28,6 +26,9 @@ import com.seasonfif.star.utils.OAuthShared;
 import com.seasonfif.star.utils.SettingShared;
 import com.seasonfif.star.utils.ThemeUtil;
 import com.seasonfif.star.widget.CircleImageView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by zhangqiang on 2018/1/29.
@@ -76,6 +77,7 @@ public class SettingFragment extends Fragment implements Toolbar.OnMenuItemClick
     mToolbar.inflateMenu(R.menu.setting_menu);
     mToolbar.setOnMenuItemClickListener(this);
 
+    mName.setText(MyApplication.INSTANCE.loadUser().login);
     MyApplication.INSTANCE.loadAvatar(MyApplication.INSTANCE.loadUser().avatar_url, mAvatar);
     mAvatar.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {

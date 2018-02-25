@@ -44,7 +44,9 @@ public class MyApplication extends Application {
         MobclickAgent.enableEncrypt(true);
 
         GreenDaoManager.getInstance();
-        DebugDB.getAddressLog();
+        if (BuildConfig.isDebug){
+            DebugDB.getAddressLog();
+        }
         createShortCut();
     }
 
@@ -75,14 +77,14 @@ public class MyApplication extends Application {
 
     public void loadPicture(String url, ImageView view){
         if (TextUtils.isEmpty(url)) {
-            url = "";
+            return;
         }
         Picasso.with(this).load(url).placeholder(R.drawable.image_placeholder).into(view);
     }
 
     public void loadAvatar(String url, ImageView view){
         if (TextUtils.isEmpty(url)) {
-            url = "";
+            return;
         }
         Picasso.with(this).load(url).placeholder(R.drawable.avatar_holder).into(view);
     }
