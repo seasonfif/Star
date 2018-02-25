@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import com.seasonfif.star.R;
 import com.seasonfif.star.constant.Constants;
 import com.seasonfif.star.database.DBEngine;
+import com.seasonfif.star.model.RepoTag;
 import com.seasonfif.star.model.Repository;
 import com.seasonfif.star.utils.DataUtil;
 import com.seasonfif.star.utils.ThemeUtil;
@@ -32,6 +33,7 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuViewBindListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -185,16 +187,21 @@ public abstract class BaseFragment extends Fragment {
         }
     };
 
-    private List<String> tags = DataUtil.getTagsData();
-
     protected void chooseTag(final Repository repository, final int position){
 
+        final List<RepoTag> repoTags = DataUtil.getRepoTags();
+        final List<String> tags = new ArrayList<>();
+        for (RepoTag tag: repoTags) {
+            tags.add(tag.name);
+        }
+
+        tags.add(0, "无");
         final String oldTag = repository.group;
         int index;
         if (TextUtils.isEmpty(repository.group)){
             index = 0;
         }else{
-            index = getIndexByTag(repository.group);
+            index = getIndexByTag(tags, repository.group);
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -225,7 +232,7 @@ public abstract class BaseFragment extends Fragment {
         builder.show();
     }
 
-    private int getIndexByTag(String tag) {
+    private int getIndexByTag(List<String> tags, String tag) {
         int index = tags.indexOf(tag);
         if (index == -1)  index = 0;
         return index;

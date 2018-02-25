@@ -20,8 +20,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.seasonfif.star.R;
+import com.seasonfif.star.database.DBEngine;
 import com.seasonfif.star.model.RepoTag;
+import com.seasonfif.star.model.Repository;
 import com.seasonfif.star.utils.DataUtil;
 import com.seasonfif.star.utils.ThemeUtil;
 import com.seasonfif.star.utils.ToastUtils;
@@ -30,6 +33,7 @@ import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemLongClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
+
 import java.util.List;
 
 /**
@@ -59,6 +63,14 @@ public class TagEditSheetDialog {
     View root = LayoutInflater.from(context).inflate(R.layout.layout_tag_edit, null);
     datas = DataUtil.getRepoTags();
     initRootView(root);
+    sheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+      @Override
+      public void onDismiss(DialogInterface dialog) {
+        DataUtil.clearRepoTags();
+        DataUtil.getRepoTags();
+        EventManager.getInstanse().notifyAll(DataObserver.MULTI, null);
+      }
+    });
     sheetDialog.setContentView(root);
   }
 
@@ -116,7 +128,8 @@ public class TagEditSheetDialog {
             }
           }).show();
     }else{
-      datas.add(0, new RepoTag("输入名称", true));
+      RepoTag tag = new RepoTag("输入名称", true);
+      datas.add(0, tag);
       adapter.notifyItemInserted(0);
     }
   }
@@ -156,6 +169,7 @@ public class TagEditSheetDialog {
             @Override public void onClick(DialogInterface dialogInterface, int i) {
               datas.remove(position);
               adapter.notifyItemRemoved(position);
+              clearTagWithThis(repoTag);
             }
           }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
         @Override public void onClick(DialogInterface dialogInterface, int i) {
@@ -166,6 +180,31 @@ public class TagEditSheetDialog {
       }).show();
     }
   };
+
+  /**
+   * 删除该标签
+   * 清除该tag标记的仓库标签
+   * @param tag
+   */
+  private void clearTagWithThis(RepoTag tag) {
+    DBEngine.deleteTag(tag);
+    changeRepoTag(tag.name, "");
+  }
+
+  /**
+   * 替换repo的标签
+   * @param oldTag
+   * @param newTag
+   */
+  private void changeRepoTag(String oldTag, String newTag){
+    List<Repository> repositories = DBEngine.loadByTag(Repository.class, oldTag);
+    if (repositories != null && repositories.size() > 0){
+      for (Repository repo: repositories) {
+        repo.group = newTag;
+      }
+      DBEngine.insertOrReplaceTx(repositories);
+    }
+  }
 
   public void show(){
     if (sheetDialog != null && !sheetDialog.isShowing()){
@@ -278,7 +317,10 @@ public class TagEditSheetDialog {
             tag.isNew = false;
           }
           holder.tv.setText(tagName);
+          String oldTag = tag.name;
           tag.name = tagName;
+          DBEngine.insertOrReplace(tag);
+          changeRepoTag(oldTag, tag.name);
         }
       }
 

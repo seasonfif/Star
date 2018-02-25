@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.seasonfif.star.R;
 import com.seasonfif.star.database.DBEngine;
@@ -321,7 +320,6 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
     @Override public boolean onMenuItemClick(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.create_desc) {
-            Toast.makeText(getActivity(), "refresh", Toast.LENGTH_SHORT).show();
             sort = "created";
             direction = "desc";
             refreshWithLoading();

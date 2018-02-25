@@ -1,6 +1,7 @@
 package com.seasonfif.star.utils;
 
 import com.google.gson.Gson;
+import com.seasonfif.star.database.DBEngine;
 import com.seasonfif.star.model.RepoTag;
 import com.seasonfif.star.model.User;
 import java.util.ArrayList;
@@ -21,14 +22,26 @@ public class DataUtil {
     return new Gson().fromJson(json, cls);
   }
 
-  public static List<String> getTagsData(){
-    return Arrays.asList(new String[]{"无","控件","框架"});
-  }
+  public static List<RepoTag> TAGS;
 
   public static List<RepoTag> getRepoTags(){
-    List<RepoTag> tags = new ArrayList<>();
-    tags.add(new RepoTag("控件"));
+    if (TAGS == null || TAGS.size() == 0){
+      TAGS = DBEngine.loadAll(RepoTag.class);
+    }
+    return TAGS;
+  }
+
+  public static void getTags(){
+    TAGS = DBEngine.loadAll(RepoTag.class);
+    /*tags.add(new RepoTag("控件"));
     tags.add(new RepoTag("框架"));
-    return tags;
+    return tags;*/
+  }
+
+
+  public static void clearRepoTags() {
+    if (TAGS != null){
+      TAGS.clear();
+    }
   }
 }

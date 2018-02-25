@@ -201,11 +201,11 @@
                       android:layout_marginTop="3dp"
                       android:textSize="12dp"
                       android:textColor="#666666"
-                      android:text="编辑仓库标签"/>
+                      android:text="添加、删除、修改标签"/>
                 </LinearLayout>
 
                 <ImageView
-                  android:id="@+id/switch_save"
+                  android:id="@+id/edit_tag"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_centerVertical="true"

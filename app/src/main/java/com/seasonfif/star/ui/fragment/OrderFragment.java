@@ -162,15 +162,15 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
         mRecyclerView.addItemDecoration(new DefaultItemDecoration(ContextCompat.getColor(getContext(), R.color.divider_color)));
 
         //打开长按拖拽的开关
-        mRecyclerView.setLongPressDragEnabled(true);
+//        mRecyclerView.setLongPressDragEnabled(true);
 
 //        这个点击事件会影响expandableItemAdapter的事件
 //        mRecyclerView.setSwipeItemClickListener(mItemClickListener);
         mRecyclerView.setSwipeMenuCreator(mSwipeMenuCreator);
         mRecyclerView.setSwipeMenuViewBindListener(mSwipeMenuViewBindListener);
         mRecyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
-        mRecyclerView.setOnItemMoveListener(mOnItemMoveListener);
-        mRecyclerView.setOnItemStateChangedListener(mOnItemStateChangedListener);
+//        mRecyclerView.setOnItemMoveListener(mOnItemMoveListener);
+//        mRecyclerView.setOnItemStateChangedListener(mOnItemStateChangedListener);
 
         /*// 自定义的核心就是DefineLoadMoreView类。
         DefineLoadMoreView loadMoreView = new DefineLoadMoreView(getContext());
@@ -236,12 +236,12 @@ public class OrderFragment extends BaseFragment implements DataObserver<Reposito
                 return repository.name.compareToIgnoreCase(t1.name);
             }
         });
-        getActivity().runOnUiThread(new Runnable() {
+        /*getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 ToastUtils.with(getContext()).show("Total:" + rawList.size());
             }
-        });
+        });*/
         List<MultiItemEntity> entities = new ArrayList<>();
         Level0Item lv0like = new Level0Item("Favorite");
         Level0Item lv0NoGroup = new Level0Item("未添加任何标签");

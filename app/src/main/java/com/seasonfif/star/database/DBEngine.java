@@ -1,7 +1,8 @@
 package com.seasonfif.star.database;
 
 import com.seasonfif.star.database.gen.RepositoryDao;
-import com.seasonfif.star.model.Repository;
+import com.seasonfif.star.model.RepoTag;
+
 import java.util.List;
 
 /**
@@ -40,7 +41,15 @@ public class DBEngine {
     return GreenDaoManager.getInstance().getDaoSession().queryBuilder(cls).where(RepositoryDao.Properties.Name.like("%"+key+"%")).list();
   }
 
+  public static <T> List<T> loadByTag(Class<T> cls, String tag) {
+    return GreenDaoManager.getInstance().getDaoSession().queryBuilder(cls).where(RepositoryDao.Properties.Group.eq(tag)).list();
+  }
+
   public static <T> T loadById(Class<T> cls, long id) {
     return GreenDaoManager.getInstance().getDaoSession().queryBuilder(cls).where(RepositoryDao.Properties.Id.eq(id)).unique();
+  }
+
+  public static void deleteTag(RepoTag repoTag) {
+    GreenDaoManager.getInstance().getDaoSession().getRepoTagDao().delete(repoTag);
   }
 }
