@@ -8,8 +8,8 @@ android {
         applicationId "com.seasonfif.star"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        versionCode 15
+        versionName "1.5"
     }
 
     //greendao配置
