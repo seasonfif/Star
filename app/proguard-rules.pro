@@ -31,7 +31,7 @@
 -keep class com.qq.taf.**{*;}
 -keep class com.tencent.**{*;}
 
--keep public class com.seasonfif.github.R$*{
+-keep public class com.seasonfif.star.R$*{
     public static final int *;
 }
 
@@ -57,7 +57,7 @@
 -keep class com.google.gson.stream.** { *; }
 # 使用Gson时需要配置Gson的解析对象及变量都不混淆。不然Gson会找不到变量。
 # 将下面替换成自己的实体类
--keep class com.example.bean.** { *; }
+-keep class com.seasonfif.star.model.** { *; }
 
 # Retrofit
 -dontwarn retrofit2.**
@@ -181,8 +181,7 @@ public static java.lang.String TABLENAME;
 -keepattributes *JavascriptInterface*
 
 #behavior
--keep class com.seasonfif.github.ui.util.FABBehavior { *;}
--keep class com.seasonfif.github.ui.util.ScrollAwareFABBehavior { *;}
+-keep class com.seasonfif.star.widget.helper.FABBehavior { *;}
 
 # OkHttp
 -keepattributes Signature

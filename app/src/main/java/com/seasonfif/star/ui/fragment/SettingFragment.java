@@ -15,7 +15,8 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.seasonfif.star.MyApplication;
 import com.seasonfif.star.R;
 import com.seasonfif.star.constant.Constants;
@@ -26,9 +27,6 @@ import com.seasonfif.star.utils.OAuthShared;
 import com.seasonfif.star.utils.SettingShared;
 import com.seasonfif.star.utils.ThemeUtil;
 import com.seasonfif.star.widget.CircleImageView;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by zhangqiang on 2018/1/29.
@@ -158,6 +156,7 @@ public class SettingFragment extends Fragment implements Toolbar.OnMenuItemClick
     int id = item.getItemId();
     if (id == R.id.action_logout) {
       OAuthShared.saveToken(getContext(), "");
+      OAuthShared.saveMe(getContext(), "");
       Intent it = new Intent(getContext(), LoginActivity.class);
       startActivity(it);
       getActivity().finish();
