@@ -297,7 +297,6 @@ public class StarFragment extends BaseFragment implements Toolbar.OnMenuItemClic
     private SwipeItemClickListener mItemClickListener = new SwipeItemClickListener() {
         @Override
         public void onItemClick(View itemView, int position) {
-            repoAdapter = null;
             Navigator.openRepoProfile(getActivity(), repoAdapter.getItem(position));
         }
     };
